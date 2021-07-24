@@ -35,22 +35,27 @@ else:
         r"C:\Users\User\projects_keys\binance_api_keys\db_credentials.json"
     ) as credentials:
         dbcredentials = json.load(credentials)
-   
-   
-
+        
+#binance client
 client = Client(api_key, api_secret)
 
-#creating connection to db
-DBconnection = create_connection(
-        dbcredentials["DBHOST"], 
-        dbcredentials["DBUSER"], 
-        dbcredentials["DBPASSWORD"], 
-        dbcredentials["DBNAME"])
-cursor = DBconnection.cursor()
+try:
+    connection = mysql.connector.connect(
+        host=dbcredentials["DBHOST"], 
+        user=dbcredentials["DBUSER"], 
+        passwd=dbcredentials["DBPASSWORD"], 
+        database=dbcredentials["DBNAME"]
+    )
+    # print("Connection to MySQL DB successful")
+except Error as e:
+    # print(f"The error '{e}' occurred")
+    connection = False
+
 if DBconnection == False:
     print("db server not available, leaving the system")
     sys.exit()
 print('connexion created')
+cursor = DBconnection.cursor()
 #obtaining symbols from db
 results_query = ""
 aQuery =""
