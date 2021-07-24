@@ -39,11 +39,12 @@ else:
 #binance client
 client = Client(api_key, api_secret)
 
-print("DBHOST: ",dbcredentials["DBHOST"], "DBUSER: ", dbcredentials["DBUSER"], 
-    "DBPASSWORD", dbcredentials["DBPASSWORD"], "DBNAME", database=dbcredentials["DBNAME"])
+#print("DBHOST: ",dbcredentials["DBHOST"], "DBUSER: ", dbcredentials["DBUSER"], 
+#    "DBPASSWORD", dbcredentials["DBPASSWORD"], "DBNAME", database=dbcredentials["DBNAME"])
 
+DBconnection =None
 try:
-    connection = mysql.connector.connect(
+    DBconnection = mysql.connector.connect(
         host=dbcredentials["DBHOST"], 
         user=dbcredentials["DBUSER"], 
         passwd=dbcredentials["DBPASSWORD"], 
@@ -52,7 +53,7 @@ try:
     # print("Connection to MySQL DB successful")
 except Exception as e:
     print(f"The error '{e}' occurred")
-    connection = False
+    DBconnection = False
 
 if DBconnection == False:
     print("db server not available, leaving the system")
