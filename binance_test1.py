@@ -105,10 +105,20 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
     print('in automatic loop, please press and hold "s" and "t" simultaneously to stop')
     #connecting again
     #creating connection to db
-    DBconnection = create_connection(dbcredentials["DBHOST"], 
-        dbcredentials["DBUSER"], 
-        dbcredentials["DBPASSWORD"], 
-        dbcredentials["DBNAME"])
+    try:
+        DBconnection = mysql.connector.connect(
+            host=dbcredentials["DBHOST"], 
+            user=dbcredentials["DBUSER"], 
+            passwd=dbcredentials["DBPASSWORD"], 
+            database=dbcredentials["DBNAME"]
+        )
+        # print("Connection to MySQL DB successful")
+    except Exception as e:
+        print(f"The error '{e}' occurred")
+        DBconnection = False
+    if DBconnection == False:
+        print("db server not available, leaving the system")
+        sys.exit()
     cursor = DBconnection.cursor()
     #checking if updated to date
     #checking date to update
