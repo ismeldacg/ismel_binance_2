@@ -197,9 +197,11 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
                 print("I recommend you to ",recommendation)
                 now = datetime.now()
                 #store to db
-                values = ('',aSymbol,now,symbol_price["price"],recommendation)
+                #values = ('',aSymbol,now,symbol_price["price"],recommendation)
+                values = (aSymbol,now,symbol_price["price"],recommendation)
                 #query
-                aQuery = "INSERT INTO assets_historical (id,symbol,datetime,price, recommendation) VALUES (%s, %s,%s,%s,%s)"
+                #aQuery = "INSERT INTO assets_historical (id,symbol,datetime,price, recommendation) VALUES (%s,%s,%s,%s,%s)"
+                aQuery = "INSERT INTO assets_historical (symbol,datetime,price, recommendation) VALUES (%s,%s,%s,%s)"
                 cursor.execute(aQuery, values)
                 #inserting delay
                 print("delay time")
