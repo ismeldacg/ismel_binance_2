@@ -20,12 +20,12 @@ from mysql_generic_script import (
 # init
 # if we are in linux, set a root, if not set another
 if platform.system() == "Linux":
-    api_key = os.environ.get('binance_api')
-    api_secret = os.environ.get('binance_secret')
-    db_host = os.environ.get('db_host')
-    db_user=os.environ.get('db_user')
-    db_password=os.environ.get('db_password')
-    db_name=os.environ.get('db_name')
+    with open("/etc/mykeys/binance_api_keys/api_key.txt") as f:
+        api_key = f.read().strip()
+    with open("/etc/mykeys/binance_api_keys/api_secret.txt") as credentials:
+        api_secret = f.read().strip()
+    with open("/etc/myemail/binance_api_keys/db_credentials.json") as credentials:
+        dbcredentials = json.load(credentials)
 else:
     with open(r"C:\Users\User\projects_keys\binance_api_keys\api_key.txt") as f:
         api_key = f.read().strip()
