@@ -22,7 +22,7 @@ from mysql_generic_script import (
 if platform.system() == "Linux":
     with open("/etc/projects_keys/binance_api_keys/api_key.txt") as f:
         api_key = f.read().strip()
-    with open("/etc/projects_keys/binance_api_keys/api_secret.txt") as credentials:
+    with open("/etc/projects_keys/binance_api_keys/api_secret.txt") as f:
         api_secret = f.read().strip()
     with open("/etc/projects_keys/binance_api_keys/db_credentials.json") as credentials:
         dbcredentials = json.load(credentials)
