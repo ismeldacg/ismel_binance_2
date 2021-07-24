@@ -1,0 +1,15 @@
+todo
+1. Convertir avg_sd_updater.py en una función que actualice a diario.
+2. Calcular avg y sd diario y semanal, tomar diario, cuando sea más volatil que semanal, más máximos y minimos?.
+3. variar la rentabilidad en funcion de números de comprar y ventas diarias, 
+    > venta, mayor rendimiento, menor venta, menor rendimiento
+4. analisis comparativo de t de student, y rendimiento
+5. aplicar a otra página
+6. desarrollo de analitics visual?
+
+
+7. si me acerco a perder, vendo?, diferencia entre última venta y precio reducido?
+
+8. promedio dia, promedio semana, cúal esta más cerca?
+
+9. si el precio anterior es menor, y por sobre el estandard, no vender, hasta que cambie
