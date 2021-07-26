@@ -51,7 +51,7 @@ def updateAvg(DBconnection, cursor):
                 cursor.execute(aQuery)
                 desviation_price = cursor.fetchall()
                 desviation_price_2 = desviation_price[0]
-                print("desviation_price of "+aSymbol+" :",desviation_price_2[0])
+                #print("desviation_price of "+aSymbol+" :",desviation_price_2[0])
                 #writing
                 #query update price
                 aQuery = "UPDATE `ref_price` SET `price`= %s WHERE `symbol`="+'"'+aSymbol+'"'
@@ -120,10 +120,30 @@ def definePerformance(DBconnection, cursor):
             #query update price
             aQuery = "UPDATE `ref_price` SET `performance`= " +'"'+1.0+'"'+ '"'+str(a_tuple[0])+'"'
             cursor.execute(aQuery,2.0)
-    print("performance_tuples: ", performance_dict)
+    #print("performance_tuples: ", performance_dict)
 
 
-
+def getRefValues(DBconnection, cursor):
+    ref_price = ""
+    aQuery =""
+    aQuery = ("SELECT * FROM `ref_price`")
+    ref_price_tuples=execute_user_query(connection=DBconnection, aQuery=aQuery)
+    ref_price_dict = {}
+    #print("ref_price_tuples: ", ref_price_tuples)
+    for a_tuple in ref_price_tuples:
+        ref_price_dict[a_tuple[1]]=a_tuple[2]
+    print("ref_price_dict: ", ref_price_dict)
+    ref_sd_dict = {}
+    for a_tuple in ref_price_tuples:
+        ref_sd_dict[a_tuple[1]]=a_tuple[4]
+    #getting the performance value
+    ref_perf_dict = {}
+    #print("ref_price_tuples: ", ref_price_tuples)
+    for a_tuple in ref_price_tuples:
+        ref_perf_dict[a_tuple[1]]=a_tuple[6]
+    #retunring all vaues
+    return ref_price_dict, ref_sd_dict, ref_perf_dict
+    
 
 
 

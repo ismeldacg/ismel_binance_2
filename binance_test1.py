@@ -8,7 +8,7 @@ from pathlib import Path
 
 from binance.client import Client
 from datetime import datetime, timedelta
-from utilities import updateAvg, definePerformance
+from utilities import updateAvg, definePerformance, getRefValues
 
 from mysql_generic_script import (
     create_connection,
@@ -72,24 +72,29 @@ for an_asset in results_query:
 
 #print("symbol_list: ", symbol_list)
 #obtaining reference price
-ref_price = ""
-aQuery =""
-aQuery = ("SELECT * FROM `ref_price`")
-ref_price_tuples=execute_user_query(connection=DBconnection, aQuery=aQuery)
-ref_price_dict = {}
-#print("ref_price_tuples: ", ref_price_tuples)
-for a_tuple in ref_price_tuples:
-    ref_price_dict[a_tuple[1]]=a_tuple[2]
-#print("ref_price_dict: ", ref_price_dict)
-ref_sd_dict = {}
-for a_tuple in ref_price_tuples:
-    ref_sd_dict[a_tuple[1]]=a_tuple[4]
-#getting the performance value
-ref_perf_dict = {}
-#print("ref_price_tuples: ", ref_price_tuples)
-for a_tuple in ref_price_tuples:
-    ref_perf_dict[a_tuple[1]]=a_tuple[6]
+# ref_price = ""
+# aQuery =""
+# aQuery = ("SELECT * FROM `ref_price`")
+# ref_price_tuples=execute_user_query(connection=DBconnection, aQuery=aQuery)
+# ref_price_dict = {}
+# #print("ref_price_tuples: ", ref_price_tuples)
+# for a_tuple in ref_price_tuples:
+#     ref_price_dict[a_tuple[1]]=a_tuple[2]
+# print("ref_price_dict: ", ref_price_dict)
+# ref_sd_dict = {}
+# for a_tuple in ref_price_tuples:
+#     ref_sd_dict[a_tuple[1]]=a_tuple[4]
+# #getting the performance value
+# ref_perf_dict = {}
+# #print("ref_price_tuples: ", ref_price_tuples)
+# for a_tuple in ref_price_tuples:
+#     ref_perf_dict[a_tuple[1]]=a_tuple[6]
 #print("ref_perf_dict: ", ref_perf_dict)
+#obtaining the dictionaries
+ref_price_dict, ref_sd_dict, ref_perf_dict=getRefValues(DBconnection, cursor)
+print("ref_price_dict: ", ref_price_dict)
+print("ref_sd_dictt: ", ref_sd_dict)
+print("ref_perf_dict: ", ref_perf_dict)
 #closing initial connection
 #closing db connection
 DBconnection.commit()
@@ -102,7 +107,7 @@ cursor = None
 
 
 while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
-    print('in automatic loop, please press and hold "s" and "t" simultaneously to stop')
+    print('in automatic loop, please press "q" to stop')
     #connecting again
     #creating connection to db
     try:
@@ -128,13 +133,14 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
     last_updated=execute_user_query(connection=DBconnection, aQuery=aQuery)
     last_update_list=last_updated[0]
     #current date 
-    print('last_update_list: ', last_update_list[0])
+    print('last_update_date: ', last_update_list[0])
     #testing if must be updated
     if (datetime.today()-last_update_list[0])>timedelta(days=1):
         #proceeding to update
-        #print("going to update******")
+        print("going to update******")
         updateAvg(DBconnection, cursor)
         definePerformance(DBconnection, cursor)
+        ref_price_dict, ref_sd_dict, ref_perf_dict=getRefValues(DBconnection, cursor)
     #getting symbols status
     #obtaining reference price
     ref_status = ""
@@ -158,7 +164,7 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
     #print("ref_status_dict: ",ref_status_dict)
     #OJO must set conditions to execute the loop
     for aSymbol in symbol_list:
-        if not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
+        if not(keyboard.is_pressed('q')):
             try:
                 symbol_price = client.get_symbol_ticker(symbol=aSymbol)
                 #get performance
@@ -173,10 +179,12 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
                 ref_symbol_status = ref_status_dict[symbol_price["symbol"]]
                 #print("ref_symbol_status: ", ref_symbol_status)
                 recommendation="do nothing"
-                # print("symbol_price[price]: ",symbol_price["price"] , 
-                # "ref_symbol_price: ",ref_symbol_price, 
-                # "ref_symbol_status: ",ref_symbol_status,
-                # "ref_symbol_perf ", ref_symbol_perf)
+                if "DOGEUSDT" in aSymbol:
+                    print("symbol_price[price]: ",symbol_price["price"] , 
+                    "ref_symbol_price: ",ref_symbol_price, 
+                    "ref_symbol_status: ",ref_symbol_status,
+                    "ref_symbol_perf ", ref_symbol_perf, "aSymbol: ", aSymbol)
+                #agregar más parentesis, seleccionar una moneda y fijarle el precio para probar
                 if float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="bought") :
                     recommendation="sell"
                     ref_symbol_status="sold"
