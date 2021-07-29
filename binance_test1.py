@@ -159,13 +159,69 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
                 ref_symbol_status = ref_status_dict[symbol_price["symbol"]]
                 #print("ref_symbol_status: ", ref_symbol_status)
                 recommendation="do nothing"
-                if "DOGEUSDT" in aSymbol:
-                    print("symbol_price[price]: ",symbol_price["price"] , 
-                    "ref_symbol_price: ",ref_symbol_price, 
-                    "ref_symbol_status: ",ref_symbol_status,
-                    "ref_symbol_perf ", ref_symbol_perf, "aSymbol: ", aSymbol)
                 #agregar más parentesis, seleccionar una moneda y fijarle el precio para probar
                 if float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="bought") :
+                    if "VETUSDT" in aSymbol:
+                        #query to know if there is an order
+                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
+                        aQuery=''
+                        cursor.execute(aQuery)
+                        sell_query = cursor.fetchall()
+                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
+                        cursor.execute(aQuery)
+                        buy_query = cursor.fetchall()
+                        if len(sell_query)==0 and len(buy_query)==0:
+                            print('no purchase order, no sell order')
+                            sell_query = cursor.fetchall()
+                            aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
+                            cummulativeQuoteQty = cursor.fetchall(aQuery)
+                            if len(cummulativeQuoteQty)==0:#if there is not value or record
+                                cummulativeQuantity=20
+                            cummulativeQuantity=cummulativeQuoteQty[0]
+                            coins_quantity=round(cummulativeQuantity/symbol_price["price"], 0)
+                            #price
+                            this_symbol_price = str(round(ref_symbol_price+(ref_symbol_perf*ref_symbol_sd), 8))
+                            try:
+                                order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity,price=this_symbol_price)
+                            except Exception as e:
+                                print(e)
+                                print('exception when selling')
+                                sys.exit()
+                            #update data base or creating the dataset
+                            aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
+                            aQuery=''
+                            cursor.execute(aQuery)
+                            sell_filled_query = cursor.fetchall()
+                            if len(sell_query)!=0:
+                                #updating
+                                #update status
+                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+sell_filled_query['cummulativeQuoteQty']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+sell_filled_query['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                            else:
+                                #if we buy, then we can store to db
+                                try:
+                                    values = (order['symbol'], order['side'], order['status'], order['orderId'], order['executedQty'], order['price'], order['cummulativeQuoteQty'])
+                                    aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId, executedQty, price, cummulativeQuoteQty) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                                    cursor.execute(aQuery, values)
+                                except:
+                                    print(e)
+                                    print("error saving to db")
+                                    sys.exit()
+                        elif len(sell_query)!=0:
+                            aQuery=""
+                            aQuery = ("SELECT `orderId`  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
+                            cursor.execute(aQuery)
+                            orderId = cursor.fetchall()
+                            #get order from binance
+                            currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
+                            #update status
+                            aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #update status
+                            aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
                     recommendation="sell"
                     ref_symbol_status="sold"
                     #after succcesfull sold status must be changed to sold
@@ -174,6 +230,54 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
                     aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                     cursor.execute(aQuery)
                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
+                    #check if currency is VETUSDT
+                    if "VETUSDT" in aSymbol:
+                        #query to know if there is an order
+                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
+                        cursor.execute(aQuery)
+                        buy_query = cursor.fetchall()
+                        if len(buy_query)==0:
+                            print('no purchase order, then we go to buy')
+                            #getting the last sold price
+                            aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `status`='FILLED'")
+                            cursor.execute(aQuery)
+                            cummulativeQuoteQty = cursor.fetchall()
+                            if len(buy_query)==0:
+                                cummulativeQuantity=20
+                            cummulativeQuantity=cummulativeQuoteQty[0]
+                            this_symbol_price = str(round(symbol_price["price"], 8))
+                            coins_quantity=round(cummulativeQuantity/symbol_price["price"], 0)
+                            buy_limit=None
+                            try:
+                                buy_limit = client.create_order(
+                                    symbol=aSymbol,
+                                    side='BUY',
+                                    type='LIMIT',
+                                    timeInForce='GTC',
+                                    quantity=coins_quantity,
+                                    price=this_symbol_price)
+                            except Exception as e:
+                                print(e)
+                                print("error buying")
+                                sys.exit()
+                            #if we buy, then we can store to db
+                            try:
+                                values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
+                                aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId) VALUES (%s,%s,%s,%s)"
+                                cursor.execute(aQuery, values)
+                            except:
+                                print(e)
+                                print("error saving to db")
+                                sys.exit()
+                        else:
+                            print('buying '+aSymbol+' yet')
+                            recommendation="buy order open"
+                            #after succcesfull bought status must be changed to bought
+                            ref_symbol_status="buy order open"
+                            #after succcesfull sold status must be changed to sold
+                            #store to db
+                            aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
                     recommendation="buy"
                     #after succcesfull bought status must be changed to bought
                     ref_symbol_status="bought"
@@ -181,6 +285,7 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
                     #store to db
                     aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                     cursor.execute(aQuery)
+
                 #getting current time
                 print("I recommend you to ",recommendation)
                 now = datetime.now()
