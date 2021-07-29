@@ -70,31 +70,11 @@ symbol_list=[]
 for an_asset in results_query:
     symbol_list.append(an_asset[2])
 
-#print("symbol_list: ", symbol_list)
-#obtaining reference price
-# ref_price = ""
-# aQuery =""
-# aQuery = ("SELECT * FROM `ref_price`")
-# ref_price_tuples=execute_user_query(connection=DBconnection, aQuery=aQuery)
-# ref_price_dict = {}
-# #print("ref_price_tuples: ", ref_price_tuples)
-# for a_tuple in ref_price_tuples:
-#     ref_price_dict[a_tuple[1]]=a_tuple[2]
-# print("ref_price_dict: ", ref_price_dict)
-# ref_sd_dict = {}
-# for a_tuple in ref_price_tuples:
-#     ref_sd_dict[a_tuple[1]]=a_tuple[4]
-# #getting the performance value
-# ref_perf_dict = {}
-# #print("ref_price_tuples: ", ref_price_tuples)
-# for a_tuple in ref_price_tuples:
-#     ref_perf_dict[a_tuple[1]]=a_tuple[6]
-#print("ref_perf_dict: ", ref_perf_dict)
-#obtaining the dictionaries
+
 ref_price_dict, ref_sd_dict, ref_perf_dict=getRefValues(DBconnection, cursor)
-print("ref_price_dict: ", ref_price_dict)
-print("ref_sd_dictt: ", ref_sd_dict)
-print("ref_perf_dict: ", ref_perf_dict)
+#print("ref_price_dict: ", ref_price_dict)
+#print("ref_sd_dictt: ", ref_sd_dict)
+#print("ref_perf_dict: ", ref_perf_dict)
 #closing initial connection
 #closing db connection
 DBconnection.commit()
@@ -216,9 +196,9 @@ while not(keyboard.is_pressed('s') and keyboard.is_pressed('t')):
                 time.sleep(10)
             except Exception as e:
                 print("exception found here")
-                DBconnection.commit()
-                cursor.close()
-                DBconnection.close()
+                time.sleep(60)
+                #delay, after this returns to for loop, but db connection is still open,
+                #if repeated, we must read the error, and decide. 29.07
                 print(e)
         else:
             print("stopped by user")
@@ -240,6 +220,86 @@ else:
     DBconnection.close()
     print("finished!")
     sys.exit()
+
+
+
+# def cyclic_loop(symbol_list, client, ref_price_dict,ref_status_dict, cursor, DBconnection, dbcredentials):
+#     #OJO must set conditions to execute the loop
+#     for aSymbol in symbol_list:
+#         if not(keyboard.is_pressed('q')):
+#             try:
+#                 symbol_price = client.get_symbol_ticker(symbol=aSymbol)
+#                 #get performance
+#                 ref_symbol_perf=ref_perf_dict[symbol_price["symbol"]]
+#                 if ref_symbol_perf==0.0:
+#                     ref_symbol_perf=0.1
+#                 #get time
+#                 ref_symbol_price=ref_price_dict[symbol_price["symbol"]]#getting price of current symbol
+#                 #print("ref_symbol_price: ", ref_symbol_price)
+#                 ref_symbol_sd = ref_sd_dict[symbol_price["symbol"]]
+#                 #print("ref_symbol_sd: ", ref_symbol_sd)
+#                 ref_symbol_status = ref_status_dict[symbol_price["symbol"]]
+#                 #print("ref_symbol_status: ", ref_symbol_status)
+#                 recommendation="do nothing"
+#                 #agregar más parentesis, seleccionar una moneda y fijarle el precio para probar
+#                 if float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="bought") :
+#                     recommendation="sell"
+#                     ref_symbol_status="sold"
+#                     #after succcesfull sold status must be changed to sold
+#                     #store to db
+#                     #query
+#                     aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+#                     cursor.execute(aQuery)
+#                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
+#                     recommendation="buy"
+#                     #after succcesfull bought status must be changed to bought
+#                     ref_symbol_status="bought"
+#                     #after succcesfull sold status must be changed to sold
+#                     #store to db
+#                     aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+#                     cursor.execute(aQuery)
+#                 #getting current time
+#                 print("I recommend you to ",recommendation)
+#                 now = datetime.now()
+#                 #store to db
+#                 #values = ('',aSymbol,now,symbol_price["price"],recommendation)
+#                 values = (aSymbol,now,symbol_price["price"],recommendation)
+#                 #query
+#                 #aQuery = "INSERT INTO assets_historical (id,symbol,datetime,price, recommendation) VALUES (%s,%s,%s,%s,%s)"
+#                 aQuery = "INSERT INTO assets_historical (symbol,datetime,price, recommendation) VALUES (%s,%s,%s,%s)"
+#                 cursor.execute(aQuery, values)
+#                 #inserting delay
+#                 print("delay time")
+#                 time.sleep(10)
+#             except Exception as e:
+#                 print("exception found here")
+#                 print("closing connection")
+#                 DBconnection.commit()
+#                 cursor.close()
+#                 DBconnection.close()
+#                 print(e)
+#                 time.sleep(10)
+#                 print("opening connector ")
+#                 DBconnection = mysql.connector.connect(
+#                     host=dbcredentials["DBHOST"], 
+#                     user=dbcredentials["DBUSER"], 
+#                     passwd=dbcredentials["DBPASSWORD"], 
+#                     database=dbcredentials["DBNAME"]
+#                 )
+#                 cyclic_loop(symbol_list, client, ref_price_dict,ref_status_dict, cursor, DBconnection, dbcredentials)
+#         else:
+#             print("stopped by user")
+#             #closing db connection
+#             DBconnection.commit()
+#             cursor.close()
+#             DBconnection.close()
+#             print("finished!")
+#             sys.exit()
+#     #closing after every loop
+#     DBconnection.commit()
+#     cursor.close()
+#     DBconnection.close()
+
 
 
 
