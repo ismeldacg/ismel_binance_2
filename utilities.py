@@ -118,7 +118,8 @@ def definePerformance(DBconnection, cursor):
         else:
             performance_dict[a_tuple[0]]=2.0
             #query update price
-            aQuery = "UPDATE `ref_price` SET `performance`= " +'"'+str(1.0)+'"'+ '"'+str(a_tuple[0])+'"'
+           #query update price
+            aQuery = "UPDATE `ref_price` SET `performance`=" +'"'+str(2.0)+'"'+ "WHERE `symbol`="+'"'+str(a_tuple[0])+'"'
             cursor.execute(aQuery,2.0)
     #print("performance_tuples: ", performance_dict)
 
