@@ -374,7 +374,7 @@ while not(keyboard.is_pressed('q')):
                                 #update
                                 try:
                                     #update status
-                                    aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `orderId`="+'"'+str(buy_limit['orderId'])+'"'
+                                    aQuery = "UPDATE `assets_transactions` SET `status`='NEW' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
