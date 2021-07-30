@@ -400,6 +400,7 @@ while not(keyboard.is_pressed('q')):
                     else:
                         #check status of buy order, getting current order
                         try:
+                            print('buy query to update: ', buy_query)
                             currentOrder = client.get_order(symbol=aSymbol,orderId=buy_query[4])
                             print('currentOrder: ', currentOrder)
                             if currentOrder['status']=='FILLED':
