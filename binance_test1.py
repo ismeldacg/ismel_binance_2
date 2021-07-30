@@ -373,10 +373,11 @@ while not(keyboard.is_pressed('q')):
                             else:
                                 #update
                                 try:
-                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
-                                    aQuery = "UPDATE `assets_transactions` SET (symbol,side,status, orderId) VALUES (%s,%s,%s,%s) WHERE `orderId`="+'"'+str(buy_limit['orderId'])+'"'
-                                    #print('buy query: ', aQuery)
-                                    cursor.execute(aQuery, values)
+                                    #update status
+                                    aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `orderId`="+'"'+str(buy_limit['orderId'])+'"'
+                                    cursor.execute(aQuery)
+                                    #commiting to db
+                                    DBconnection.commit()
                                 except Exception as e:
                                     print('exception updating to db ', e)
                                     sys.exit()
