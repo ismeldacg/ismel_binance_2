@@ -353,7 +353,7 @@ while not(keyboard.is_pressed('q')):
                         except Exception as e:
                             print(e)
                             print("error buying ", aSymbol)
-                            if "APIError(code=-1021)" in str(e):qqqq
+                            if "APIError(code=-1021)" in str(e):
                                 break
                             else:
                                 sys.exit()
@@ -374,7 +374,7 @@ while not(keyboard.is_pressed('q')):
                                 #update
                                 try:
                                     values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
-                                    aQuery = "UPDATE `assets_transactions` SET (symbol,side,status, orderId) VALUES (%s,%s,%s,%s) WHERE `orderId`="+'"'+buy_limit['orderId']+'"'
+                                    aQuery = "UPDATE `assets_transactions` SET (symbol,side,status, orderId) VALUES (%s,%s,%s,%s) WHERE `orderId`="+'"'+str(buy_limit['orderId'])+'"'
                                     #print('buy query: ', aQuery)
                                     cursor.execute(aQuery, values)
                                 except Exception as e:
@@ -392,7 +392,7 @@ while not(keyboard.is_pressed('q')):
                             cursor.execute(aQuery)
                             #commiting to db
                             DBconnection.commit()
-                        except:
+                        except Exception as e:
                             print(e)
                             print("error saving buy order of "+aSymbol+ ' to db')
                             sys.exit()

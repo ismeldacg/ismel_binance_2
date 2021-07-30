@@ -13,19 +13,20 @@ from mysql_generic_script import (
     insert_into_table,
 )
 
-
-
-
 def updateAvg(DBconnection, cursor):
     #first we get current date, and move 7 days back
     #ref_day = datetime.today() - timedelta(days=7)
     ref_day = datetime.today() - timedelta(days=1)
     #print("ref day: ",ref_day)
     #obtaining symbols from db
-    results_query = ""
-    aQuery =""
-    aQuery = ("SELECT * FROM `assets_symbols`")
-    results_query=execute_user_query(connection=DBconnection, aQuery=aQuery)
+    try:
+        results_query = ""
+        aQuery =""
+        aQuery = ("SELECT * FROM `assets_symbols`")
+        results_query=execute_user_query(connection=DBconnection, aQuery=aQuery)
+    except Exception as e:
+        print("error updating: ", e)
+        sys.exit()
     #iterate over dictionary to get names and symbols
     symbol_list=[]
     for an_asset in results_query:
@@ -43,6 +44,7 @@ def updateAvg(DBconnection, cursor):
             cursor.execute(aQuery)
             average_price = cursor.fetchall()
             average_price_2 = average_price[0]
+            #print(str(average_price_2)+' average of '+aSymbol)
             if average_price_2[0] is not None: 
                 #print("average_price of "+aSymbol+" :",average_price_2[0])
                 aQuery =""
@@ -97,43 +99,52 @@ def definePerformance(DBconnection, cursor):
             18:1.9,
             19:2.0,
     }
-    ref_day = datetime.today() - timedelta(days=7) 
-    aQuery =""
-    #obtener criterio de rendimiento
-    aQuery = ("SELECT `symbol`,COUNT(*) FROM `assets_historical` WHERE  `datetime` > "+'"'+
-    str(ref_day)+'"'+
-    " and (`recommendation`='sell' or `recommendation`='buy' ) GROUP BY `symbol`")
-    desviation_price = 0
-    cursor.execute(aQuery)
-    performance_tuples = cursor.fetchall()
+    ref_day = datetime.today() - timedelta(days=7)
+    try: 
+        aQuery =""
+        #obtener criterio de rendimiento
+        aQuery = ("SELECT `symbol`,COUNT(*) FROM `assets_historical` WHERE  `datetime` > "+'"'+
+        str(ref_day)+'"'+
+        " and (`recommendation`='sell' or `recommendation`='buy' ) GROUP BY `symbol`")
+        desviation_price = 0
+        cursor.execute(aQuery)
+        performance_tuples = cursor.fetchall()
+    except Exception as e:
+        print('erro calculating performance: ', e)
     performance_dict = {}
     #print("ref_price_tuples: ", ref_price_tuples)
-    for a_tuple in performance_tuples:
-        if a_tuple[1]<20:
-            #print(a_tuple[0], a_tuple[1], options[a_tuple[1]])
-            performance_dict[a_tuple[0]]=options[a_tuple[1]]
+    try:
+        for a_tuple in performance_tuples:
+            if a_tuple[1]<20:
+                #print(a_tuple[0], a_tuple[1], options[a_tuple[1]])
+                performance_dict[a_tuple[0]]=options[a_tuple[1]]
+                #query update price
+                aQuery = "UPDATE `ref_price` SET `performance`=" +'"'+str(options[a_tuple[1]])+'"'+ "WHERE `symbol`="+'"'+str(a_tuple[0])+'"'
+                cursor.execute(aQuery,( a_tuple[1]))
+            else:
+                performance_dict[a_tuple[0]]=2.0
+                #query update price
             #query update price
-            aQuery = "UPDATE `ref_price` SET `performance`=" +'"'+str(options[a_tuple[1]])+'"'+ "WHERE `symbol`="+'"'+str(a_tuple[0])+'"'
-            cursor.execute(aQuery,( a_tuple[1]))
-        else:
-            performance_dict[a_tuple[0]]=2.0
-            #query update price
-           #query update price
-            aQuery = "UPDATE `ref_price` SET `performance`=" +'"'+str(2.0)+'"'+ "WHERE `symbol`="+'"'+str(a_tuple[0])+'"'
-            cursor.execute(aQuery,2.0)
+                aQuery = "UPDATE `ref_price` SET `performance`=" +'"'+str(2.0)+'"'+ "WHERE `symbol`="+'"'+str(a_tuple[0])+'"'
+                cursor.execute(aQuery,2.0)
+    except Exception as e:
+        print('error when updating: ', e)
     #print("performance_tuples: ", performance_dict)
 
 
 def getRefValues(DBconnection, cursor):
     ref_price = ""
     aQuery =""
-    aQuery = ("SELECT * FROM `ref_price`")
-    ref_price_tuples=execute_user_query(connection=DBconnection, aQuery=aQuery)
+    try:
+        aQuery = ("SELECT * FROM `ref_price`")
+        ref_price_tuples=execute_user_query(connection=DBconnection, aQuery=aQuery)
+    except Exception as e:
+        print("exception getting ref price")
     ref_price_dict = {}
     #print("ref_price_tuples: ", ref_price_tuples)
     for a_tuple in ref_price_tuples:
         ref_price_dict[a_tuple[1]]=a_tuple[2]
-    print("ref_price_dict: ", ref_price_dict)
+    #print("ref_price_dict: ", ref_price_dict)
     ref_sd_dict = {}
     for a_tuple in ref_price_tuples:
         ref_sd_dict[a_tuple[1]]=a_tuple[4]
