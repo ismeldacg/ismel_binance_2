@@ -114,8 +114,12 @@ while not(keyboard.is_pressed('q')):
         updateAvg(DBconnection, cursor)
         definePerformance(DBconnection, cursor)
         ref_price_dict, ref_sd_dict, ref_perf_dict=getRefValues(DBconnection, cursor)
+        print('commiting to db')
+        DBconnection.commit()
+        #sys.exit()
     #getting symbols status
     #obtaining reference price
+
     ref_status = ""
     aQuery =""
     aQuery = ("SELECT * FROM `ref_price`")
@@ -169,10 +173,10 @@ while not(keyboard.is_pressed('q')):
                         buy_query = cursor.fetchall()
                     except Exception as e:
                         print('no sell order, no buy order')
-                    print('no exception in sell query 1')
+                    #print('no exception in sell query 1')
 
                     if len(sell_query)==0 and len(buy_query)==0:
-                        print('no purchase order, no sell order')
+                        print('no active purchase order, no active sell order')
                         cummulativeQuoteQty=[]
                         cummulativeQuantity=0
                         try:
@@ -181,35 +185,68 @@ while not(keyboard.is_pressed('q')):
                         except Exception as e:
                             print('not sold order filled')
                         if len(cummulativeQuoteQty)==0:#if there is not value or record
-                            print('no sold order for ',aSymbol)
+                            print('no filled sold order for ',aSymbol)
                             cummulativeQuantity=20#assigning a value
                         else:  
-                            cummulativeQuantity=cummulativeQuoteQty[0]
-                        coins_quantity=round(cummulativeQuantity/symbol_price["price"], 0)
-                        print('selling '+coins_quantity+ 'of '+aSymbol)
+                            cummulativeQuantity1=cummulativeQuoteQty[0]
+                            cummulativeQuantity=cummulativeQuantity1[0]
+                        #exchaging symbol price
+                        current_str_symbol_price=symbol_price["price"]
+                        print('current_str_symbol_price: ', current_str_symbol_price)
+                        current_symbol_price=float(current_str_symbol_price)
+                        #trying to get first 9 characters of price
+                        try:
+                            this_symbol_price = current_str_symbol_price[0:10]
+                            print('this_symbol_price 0:10: ', this_symbol_price)
+                        except:
+                            this_symbol_price = current_str_symbol_price
+                            print('this_symbol_price', this_symbol_price)
+                        
+                        coins_quantity_1=cummulativeQuantity/current_symbol_price
+                        coins_quantity=round(coins_quantity_1,0)
+                        print('selling '+str(coins_quantity)+ 'of '+aSymbol)
                         #price
-                        this_symbol_price = str(round(ref_symbol_price+(ref_symbol_perf*ref_symbol_sd), 8))
+                        #trying to get first 9 characters of price
+                        current_str_symbol_price=symbol_price["price"]
+                        print('current_str_symbol_price: ', current_str_symbol_price)
+                        current_symbol_price=float(current_str_symbol_price)
+                        #trying to get first 9 characters of price
+                        try:
+                            this_symbol_price = current_str_symbol_price[0:10]
+                            print('this_symbol_price 0:10: ', this_symbol_price)
+                        except:
+                            this_symbol_price = current_str_symbol_price
+                            print('this_symbol_price', this_symbol_price)
                         try:
                             order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity,price=this_symbol_price)
+                            print('sell order: ', order)
                         except Exception as e:
                             print(e)
                             print('exception when selling ', aSymbol)
                             sys.exit()
                         #update data base or creating the dataset
                         #query if there is a filled order, 
-                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
-                        aQuery=''
-                        cursor.execute(aQuery)
-                        sell_filled_query = cursor.fetchall()
-                        if len(sell_query)!=0:
+                        sell_filled_query=[]
+                        try:
+                            aQuery=''
+                            aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
+                            cursor.execute(aQuery)
+                            sell_filled_query = cursor.fetchall()
+                        except:
+                            print('not filled sell order')
+                        if len(sell_filled_query)!=0:
                             print('updating selling order of ',aSymbol)
                             #updating
                             #update status
                             try:
                                 aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+sell_filled_query['cummulativeQuoteQty']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
                                 aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+sell_filled_query['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
                             except:
                                 print(e)
                                 print("error inserting to db")
@@ -221,6 +258,17 @@ while not(keyboard.is_pressed('q')):
                                 values = (order['symbol'], order['side'], order['status'], order['orderId'], order['executedQty'], order['price'], order['cummulativeQuoteQty'])
                                 aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId, executedQty, price, cummulativeQuoteQty) VALUES (%s,%s,%s,%s,%s,%s,%s)"
                                 cursor.execute(aQuery, values)
+                                #commiting to db
+                                DBconnection.commit()
+                                recommendation="sell"
+                                ref_symbol_status="sold"
+                                #after succcesfull sold status must be changed to sold
+                                #store to db
+                                #query
+                                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
                             except:
                                 print(e)
                                 print("error inserting to db")
@@ -236,44 +284,62 @@ while not(keyboard.is_pressed('q')):
                         #update status
                         aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                         cursor.execute(aQuery)
+                        #commiting to db
+                        DBconnection.commit()
                         #update status
                         aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                         cursor.execute(aQuery)
-                    recommendation="sell"
-                    ref_symbol_status="sold"
-                    #after succcesfull sold status must be changed to sold
-                    #store to db
-                    #query
-                    aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
-                    cursor.execute(aQuery)
+                        #commiting to db
+                        DBconnection.commit()
                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
                     print('going to buy ', aSymbol)
                     #query to know if there is an order
                     buy_query=[]
+                    buy_query_filled=[]
                     try:
                         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
                         cursor.execute(aQuery)
                         buy_query = cursor.fetchall()
+                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='FILLED'")
+                        cursor.execute(aQuery)
+                        buy_query_filled = cursor.fetchall()
                     except Exception as e:
                         print('no new buy order')
                     if len(buy_query)==0:
                         print('no purchase order, then we go to buy')
                         #getting the last sold price
                         cummulativeQuoteQty=[]
+                        cummulativeQuantity=0
                         try:
                             aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
                             cursor.execute(aQuery)
                             cummulativeQuoteQty = cursor.fetchall()
                         except Exception as e:
-                            cummulativeQuoteQty=[]
+                            print('error in select cummulativeQuoteQty ',e)
+
+                        print('cummulativeQuoteQty: ', cummulativeQuoteQty)
+
                         if len(cummulativeQuoteQty)==0:
                             print('getting last sold price if any')
                             cummulativeQuantity=20    
                         else:
-                            cummulativeQuantity=cummulativeQuoteQty[0]
-                        this_symbol_price = str(round(symbol_price["price"], 8))
-                        coins_quantity=round(cummulativeQuantity/symbol_price["price"], 0)
-                        print('buying '+coins_quantity+ 'of '+aSymbol)
+                            cummulativeQuantity1=cummulativeQuoteQty[0]
+                            cummulativeQuantity=cummulativeQuantity1[0]
+                        current_str_symbol_price=symbol_price["price"]
+                        print('current_str_symbol_price: ', current_str_symbol_price)
+                        current_symbol_price=float(current_str_symbol_price)
+                        #trying to get first 9 characters of price
+                        try:
+                            this_symbol_price = current_str_symbol_price[0:10]
+                            print('this_symbol_price 0:10: ', this_symbol_price)
+                        except:
+                            this_symbol_price = current_str_symbol_price
+                            print('this_symbol_price', this_symbol_price)
+                        print('cummulativeQuantity: ', cummulativeQuantity)
+                        coins_quantity_1=cummulativeQuantity/current_symbol_price
+                        coins_quantity=round(coins_quantity_1,0)
+                        #print("this_symbol_price: ", "'"+this_symbol_price+"'")
+                        print('buying '+str(coins_quantity)+ ' '+aSymbol)
                         buy_limit=None
                         try:
                             buy_limit = client.create_order(
@@ -283,20 +349,64 @@ while not(keyboard.is_pressed('q')):
                                 timeInForce='GTC',
                                 quantity=coins_quantity,
                                 price=this_symbol_price)
+                            print('buy order ',buy_limit)
                         except Exception as e:
                             print(e)
                             print("error buying ", aSymbol)
-                            sys.exit()
+                            if "APIError(code=-1021)" in str(e):qqqq
+                                break
+                            else:
+                                sys.exit()
                         #if we buy, then we can store to db
                         try:
-                            values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
-                            aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId) VALUES (%s,%s,%s,%s)"
-                            cursor.execute(aQuery, values)
+                            #if no new, no filled, then create at first time
+                            if len(buy_query)==0 and len(buy_query_filled)==0:
+                                try:
+                                    #print('inserting value:' , buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
+                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
+                                    aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId) VALUES (%s,%s,%s,%s)"
+                                    #print('buy query: ', aQuery)
+                                    cursor.execute(aQuery, values)
+                                except Exception as e:
+                                    print('exception inserting to db ', e)
+                                    sys.exit()
+                            else:
+                                #update
+                                try:
+                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
+                                    aQuery = "UPDATE `assets_transactions` SET (symbol,side,status, orderId) VALUES (%s,%s,%s,%s) WHERE `orderId`="+'"'+buy_limit['orderId']+'"'
+                                    #print('buy query: ', aQuery)
+                                    cursor.execute(aQuery, values)
+                                except Exception as e:
+                                    print('exception updating to db ', e)
+                                    sys.exit()
+                            #commiting to db
+                            DBconnection.commit()
+                            #updating recommendation
+                            recommendation="buy"
+                            #after succcesfull bought status must be changed to bought
+                            ref_symbol_status="bought"
+                            #after succcesfull sold status must be changed to sold
+                            #store to db
+                            aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #commiting to db
+                            DBconnection.commit()
                         except:
                             print(e)
                             print("error saving buy order of "+aSymbol+ ' to db')
                             sys.exit()
                     else:
+                        #check status of buy order, getting current order
+                        try:
+                            currentOrder = client.get_order(symbol=aSymbol,orderId=buy_query[4])
+                            print('currentOrder: ', currentOrder)
+                            if currentOrder['status']=='FILLED':
+                                aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `orderId`="+'"'+currentOrder[orderId]+'"'
+                        except Exception as e:
+                            print('error updating status: ', e)
+                            sys.exit()
+
                         print('still buying '+aSymbol+' yet')
                         recommendation="buy order open"
                             #after succcesfull bought status must be changed to bought
@@ -305,27 +415,23 @@ while not(keyboard.is_pressed('q')):
                         #store to db
                         aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                         cursor.execute(aQuery)
-                    recommendation="buy"
-                    #after succcesfull bought status must be changed to bought
-                    ref_symbol_status="bought"
-                    #after succcesfull sold status must be changed to sold
-                    #store to db
-                    aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
-                    cursor.execute(aQuery)
+                        #commiting to db
+                        DBconnection.commit()
                 #getting current time
                 #print("I recommend you to ",recommendation)
                 now = datetime.now()
                 #store to db
-                #values = ('',aSymbol,now,symbol_price["price"],recommendation)
                 values = (aSymbol,now,symbol_price["price"],recommendation)
                 #query
                 aQuery = "INSERT INTO assets_historical (symbol,datetime,price, recommendation) VALUES (%s,%s,%s,%s)"
                 cursor.execute(aQuery, values)
+                #commiting to db
+                DBconnection.commit()
                 #inserting delay
                 #print("delay time")
                 time.sleep(10)
             except Exception as e:
-                print("exception found here")
+                print("exception found here: ", e)
                 time.sleep(60)
                 #delay, after this returns to for loop, but db connection is still open,
                 #if repeated, we must read the error, and decide. 29.07
