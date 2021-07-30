@@ -162,23 +162,35 @@ while not(keyboard.is_pressed('q')):
                 #agregar más parentesis, seleccionar una moneda y fijarle el precio para probar
                 if float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="bought") :
                         #query to know if there is an order
-                    print("go to buy ", aSymbol)
-                    aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
-                    aQuery=''
-                    cursor.execute(aQuery)
-                    sell_query = cursor.fetchall()
-                    aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
-                    cursor.execute(aQuery)
-                    buy_query = cursor.fetchall()
+                    print("go to sell ", aSymbol)
+                    sell_query=[]
+                    buy_query=[]
+                    try:
+                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
+                        aQuery=''
+                        cursor.execute(aQuery)
+                        sell_query = cursor.fetchall()
+                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
+                        cursor.execute(aQuery)
+                        buy_query = cursor.fetchall()
+                    except Exception as e:
+                        print('no sell order, no buy order')
+                    print('no exception in sell query 1')
+
                     if len(sell_query)==0 and len(buy_query)==0:
                         print('no purchase order, no sell order')
-                        sell_query = cursor.fetchall()
-                        aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
-                        cummulativeQuoteQty = cursor.fetchall(aQuery)
+                        cummulativeQuoteQty=[]
+                        cummulativeQuantity=0
+                        try:
+                            aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
+                            cummulativeQuoteQty = cursor.fetchall(aQuery)
+                        except Exception as e:
+                            print('not sold order filled')
                         if len(cummulativeQuoteQty)==0:#if there is not value or record
                             print('no sold order for ',aSymbol)
                             cummulativeQuantity=20#assigning a value
-                        cummulativeQuantity=cummulativeQuoteQty[0]
+                        else:  
+                            cummulativeQuantity=cummulativeQuoteQty[0]
                         coins_quantity=round(cummulativeQuantity/symbol_price["price"], 0)
                         print('selling '+coins_quantity+ 'of '+aSymbol)
                         #price
@@ -243,19 +255,28 @@ while not(keyboard.is_pressed('q')):
                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
                     print('going to buy ', aSymbol)
                     #query to know if there is an order
-                    aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
-                    cursor.execute(aQuery)
-                    buy_query = cursor.fetchall()
+                    buy_query=[]
+                    try:
+                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
+                        cursor.execute(aQuery)
+                        buy_query = cursor.fetchall()
+                    except Exception as e:
+                        print('no new buy order')
                     if len(buy_query)==0:
                         print('no purchase order, then we go to buy')
                         #getting the last sold price
-                        aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
-                        cursor.execute(aQuery)
-                        cummulativeQuoteQty = cursor.fetchall()
-                        if len(buy_query)==0:
+                        cummulativeQuoteQty=[]
+                        try:
+                            aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
+                            cursor.execute(aQuery)
+                            cummulativeQuoteQty = cursor.fetchall()
+                        except Exception as e:
+
+                        if len(cummulativeQuoteQty)==0:
                             print('getting last sold price if any')
-                            cummulativeQuantity=20
-                        cummulativeQuantity=cummulativeQuoteQty[0]
+                            cummulativeQuantity=20    
+                        else:
+                            cummulativeQuantity=cummulativeQuoteQty[0]
                         this_symbol_price = str(round(symbol_price["price"], 8))
                         coins_quantity=round(cummulativeQuantity/symbol_price["price"], 0)
                         print('buying '+coins_quantity+ 'of '+aSymbol)
