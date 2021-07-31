@@ -168,11 +168,15 @@ while not(keyboard.is_pressed('q')):
                         aQuery=''
                         cursor.execute(aQuery)
                         sell_query = cursor.fetchall()
+                    except Exception as e:
+                        print('no sell order')
+                    try:
                         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
                         cursor.execute(aQuery)
                         buy_query = cursor.fetchall()
                     except Exception as e:
-                        print('no sell order, no buy order')
+                        print('no buy order')
+                    
                     #print('no exception in sell query 1')
 
                     if len(sell_query)==0 and len(buy_query)==0:
@@ -282,15 +286,37 @@ while not(keyboard.is_pressed('q')):
                         #get order from binance
                         currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
                         #update status
-                        aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                        if  'filled' in currentOrder['status']:
+                            aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #commiting to db
+                            DBconnection.commit()
+                            #update status
+                            aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #commiting to db
+                            DBconnection.commit()
+                    #check if there is an open buy order
+                    elif len(buy_query)!=0:
+                        print('there is an open buy order, so I can not sell')
+                        aQuery=""
+                        aQuery = ("SELECT `orderId`  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
                         cursor.execute(aQuery)
-                        #commiting to db
-                        DBconnection.commit()
+                        orderId = cursor.fetchall()
+                        #get order from binance
+                        currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
                         #update status
-                        aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
-                        cursor.execute(aQuery)
-                        #commiting to db
-                        DBconnection.commit()
+                        if  'filled' in currentOrder['status']:
+                            aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #commiting to db
+                            DBconnection.commit()
+                            #update status
+                            aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #commiting to db
+                            DBconnection.commit()
+                    
                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
                     print('going to buy ', aSymbol)
                     #query to know if there is an order
