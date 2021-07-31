@@ -169,7 +169,7 @@ while not(keyboard.is_pressed('q')):
                         cursor.execute(aQuery)
                         sell_query = cursor.fetchall()
                     except Exception as e:
-                        print('no sell order')
+                        print('exception because of no sell order')
                     try:
                         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
                         cursor.execute(aQuery)
@@ -183,6 +183,7 @@ while not(keyboard.is_pressed('q')):
                         print('no active purchase order, no active sell order')
                         cummulativeQuoteQty=[]
                         cummulativeQuantity=0
+                        this_symbol_price=""
                         try:
                             aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
                             cummulativeQuoteQty = cursor.fetchall(aQuery)
@@ -207,7 +208,7 @@ while not(keyboard.is_pressed('q')):
                             print('this_symbol_price', this_symbol_price)
                         
                         coins_quantity_1=cummulativeQuantity/current_symbol_price
-                        coins_quantity=round(coins_quantity_1,0)
+                        coins_quantity=round(coins_quantity_1,0)-1#to avoid insuficiente funds
                         print('selling '+str(coins_quantity)+ 'of '+aSymbol)
                         #price
                         #trying to get first 9 characters of price
@@ -215,19 +216,25 @@ while not(keyboard.is_pressed('q')):
                         print('current_str_symbol_price: ', current_str_symbol_price)
                         current_symbol_price=float(current_str_symbol_price)
                         #trying to get first 9 characters of price
-                        try:
-                            this_symbol_price = current_str_symbol_price[0:10]
-                            print('this_symbol_price 0:10: ', this_symbol_price)
-                        except:
-                            this_symbol_price = current_str_symbol_price
-                            print('this_symbol_price', this_symbol_price)
+                        # try:
+                        #     this_symbol_price = current_str_symbol_price[0:10]
+                        #     print('this_symbol_price 0:10: ', this_symbol_price)
+                        # except:
+                        #     this_symbol_price = current_str_symbol_price
+                        #     print('this_symbol_price', this_symbol_price)
                         try:
                             order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity,price=this_symbol_price)
                             print('sell order: ', order)
                         except Exception as e:
-                            print(e)
-                            print('exception when selling ', aSymbol)
-                            sys.exit()
+                            if 'APIError(code=-2010)' in str(e):
+                                coins_quantity2=coins_quantity-1
+                                order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity2,price=this_symbol_price)
+                            print('sell order 2: ', order)
+                            else:
+                                print(e)
+                                print('exception when selling ', aSymbol)
+                                #if insuficient funds, purchase with less******
+                                sys.exit()
                         #update data base or creating the dataset
                         #query if there is a filled order, 
                         sell_filled_query=[]
