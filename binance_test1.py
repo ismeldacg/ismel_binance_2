@@ -453,7 +453,7 @@ while not(keyboard.is_pressed('q')):
                             ordertoUpdate = client.get_order(symbol=aSymbol,orderId=buy_query_data[4])
                             print('currentOrder: ', ordertoUpdate)
                             if ordertoUpdate['status']=='FILLED':
-                                aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `orderId`="+'"'+ordertoUpdate['orderId']+'"'
+                                aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'
                         except Exception as e:
                             print('error updating status: ', e)
                             sys.exit()
