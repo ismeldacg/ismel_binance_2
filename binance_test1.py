@@ -298,6 +298,7 @@ while not(keyboard.is_pressed('q')):
                         cursor.execute(aQuery)
                         orderId = cursor.fetchall()
                         #get order from binance
+                        currentOrder={}
                         currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
                         #update status
                         if  'filled' in currentOrder['status']:
@@ -318,6 +319,7 @@ while not(keyboard.is_pressed('q')):
                         cursor.execute(aQuery)
                         orderId = cursor.fetchall()
                         #get order from binance
+                        currentOrder={}
                         currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
                         #update status
                         if  'filled' in currentOrder['status']:
@@ -446,6 +448,7 @@ while not(keyboard.is_pressed('q')):
                         try:
                             print('buy query to update: ', buy_query)
                             buy_query_data=buy_query[0]#getting first of tuple
+                            currentOrder={}
                             currentOrder = client.get_order(symbol=aSymbol,orderId=buy_query_data[4])
                             print('currentOrder: ', currentOrder)
                             if currentOrder['status']=='FILLED':
