@@ -228,9 +228,15 @@ while not(keyboard.is_pressed('q')):
                             print('sell order: ', order)
                         except Exception as e:
                             if 'APIError(code=-2010)' in str(e):
-                                coins_quantity2=coins_quantity-1
-                                order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity2,price=this_symbol_price)
-                                print('sell order 2: ', order)
+                                try:
+                                    coins_quantity2=coins_quantity-1
+                                    order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity2,price=this_symbol_price)
+                                    print('sell order 2: ', order)
+                                except Exception as e:
+                                    print(e)
+                                    print('exception when selling ', aSymbol)
+                                    #if insuficient funds, purchase with less******
+                                    sys.exit()
                             else:
                                 print(e)
                                 print('exception when selling ', aSymbol)
