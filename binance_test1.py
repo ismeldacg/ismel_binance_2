@@ -454,10 +454,12 @@ while not(keyboard.is_pressed('q')):
                             print('currentOrder: ', ordertoUpdate)
                             if ordertoUpdate['status']=='FILLED':
                                 aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
                         except Exception as e:
                             print('error updating status: ', e)
                             sys.exit()
-
                         print('still buying '+aSymbol+' yet')
                         recommendation="buy order open"
                             #after succcesfull bought status must be changed to bought
