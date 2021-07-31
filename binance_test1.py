@@ -363,8 +363,8 @@ while not(keyboard.is_pressed('q')):
                             if len(buy_query)==0 and len(buy_query_filled)==0:
                                 try:
                                     #print('inserting value:' , buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
-                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
-                                    aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId) VALUES (%s,%s,%s,%s)"
+                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'],0,buy_limit[price],0)
+                                    aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId) VALUES (%s,%s,%s,%s,%s,%s,%s)"
                                     #print('buy query: ', aQuery)
                                     cursor.execute(aQuery, values)
                                 except Exception as e:
