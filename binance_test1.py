@@ -300,6 +300,7 @@ while not(keyboard.is_pressed('q')):
                         orderId=result_tuple[0]
                         #get order from binance
                         print('result_tuple array: ', result_tuple[0])
+                        print('orderId[4]: ', orderId[4])
                         currentOrder={}
                         currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
                         #update status
