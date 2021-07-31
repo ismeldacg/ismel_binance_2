@@ -445,7 +445,8 @@ while not(keyboard.is_pressed('q')):
                         #check status of buy order, getting current order
                         try:
                             print('buy query to update: ', buy_query)
-                            currentOrder = client.get_order(symbol=aSymbol,orderId=buy_query[4])
+                            buy_query_data=buy_query[0]#getting first of tuple
+                            currentOrder = client.get_order(symbol=aSymbol,orderId=buy_query_data[4])
                             print('currentOrder: ', currentOrder)
                             if currentOrder['status']=='FILLED':
                                 aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `orderId`="+'"'+currentOrder[orderId]+'"'
