@@ -64,35 +64,35 @@ cursor = DBconnection.cursor()
 
 
 try:
-    while True:
-        sell_query = ""
-        aQuery =""
-        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`='VETUSDT' and `side`='SELL' and `status`='NEW'")
-        sell_query=execute_user_query(connection=DBconnection, aQuery=aQuery)
-        aQuery =""
-        if len(sell_query)==0:
-            print('no sell order')
-            buy_query = ""
-            aQuery =""
-            aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`='VETUSDT' and `side`='BUY' and `status`='NEW'")
-            buy_query=execute_user_query(connection=DBconnection, aQuery=aQuery)
-            aQuery =""
-            if len(buy_query)==0:
-                print('no purchase order, then we go to sell')
-            else:
-                print('buying yet')
+    # while True:
+    #     sell_query = ""
+    #     aQuery =""
+    #     aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`='VETUSDT' and `side`='SELL' and `status`='NEW'")
+    #     sell_query=execute_user_query(connection=DBconnection, aQuery=aQuery)
+    #     aQuery =""
+    #     if len(sell_query)==0:
+    #         print('no sell order')
+    #         buy_query = ""
+    #         aQuery =""
+    #         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`='VETUSDT' and `side`='BUY' and `status`='NEW'")
+    #         buy_query=execute_user_query(connection=DBconnection, aQuery=aQuery)
+    #         aQuery =""
+    #         if len(buy_query)==0:
+    #             print('no purchase order, then we go to sell')
+    #         else:
+    #             print('buying yet')
 
-        else:
-            print('selling yet')
-        time.sleep(10)
+    #     else:
+    #         print('selling yet')
+    #     time.sleep(10)
     # order = client.order_limit_sell(symbol='SHIBUSDT',quantity=1700000,price='0.00000617')
     # print("order: ", order)
     # orderId = order["orderId"]
     #print('Sell order placed at {}\n'.format(sellPrice))
     # while True:
-    #     currentOrder = client.get_order(symbol=pair,orderId=orderId)
-    #     if currentOrder['status']=='FILLED':
-    #         print("Sold: {} at {}".format(quantity,sellPrice))
+    currentOrder = client.get_order(symbol='MBLUSDT',orderId=114655204)
+    if currentOrder['status']=='FILLED':
+        print("Sold: {} at {}".format(currentOrder['executedQty'],currentOrder['orderId']))
     #         break
     #         print(".")
     # # buy_limit = client.create_order(
