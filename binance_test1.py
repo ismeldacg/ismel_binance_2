@@ -229,7 +229,7 @@ while not(keyboard.is_pressed('q')):
                             if 'APIError(code=-2010)' in str(e):
                                 coins_quantity2=coins_quantity-1
                                 order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity2,price=this_symbol_price)
-                            print('sell order 2: ', order)
+                                print('sell order 2: ', order)
                             else:
                                 print(e)
                                 print('exception when selling ', aSymbol)
