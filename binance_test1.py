@@ -294,7 +294,7 @@ while not(keyboard.is_pressed('q')):
                     elif len(sell_query)!=0:
                         print('there is an open sell order, so I can not sell')
                         aQuery=""
-                        aQuery = ("SELECT `orderId`  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
+                        aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
                         cursor.execute(aQuery)
                         result_tuple = cursor.fetchall()
                         orderId=result_tuple[0]
