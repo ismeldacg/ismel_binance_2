@@ -164,13 +164,14 @@ while not(keyboard.is_pressed('q')):
                     sell_query=[]
                     buy_query=[]
                     try:
-                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
                         aQuery=''
+                        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
                         cursor.execute(aQuery)
                         sell_query = cursor.fetchall()
                     except Exception as e:
                         print('exception because of no sell order')
                     try:
+                        aQuery=''
                         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
                         cursor.execute(aQuery)
                         buy_query = cursor.fetchall()
@@ -330,14 +331,18 @@ while not(keyboard.is_pressed('q')):
                     buy_query=[]
                     buy_query_filled=[]
                     try:
+                        aQuery=''
                         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
                         cursor.execute(aQuery)
                         buy_query = cursor.fetchall()
+                    except Exception as e:
+                        print('no new buy order')
+                    try:
                         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='FILLED'")
                         cursor.execute(aQuery)
                         buy_query_filled = cursor.fetchall()
                     except Exception as e:
-                        print('no new buy order')
+                        print('no filled buy order')
                     if len(buy_query)==0:
                         print('no purchase order, then we go to buy')
                         #getting the last sold price
