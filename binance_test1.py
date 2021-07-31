@@ -216,13 +216,7 @@ while not(keyboard.is_pressed('q')):
                         current_str_symbol_price=symbol_price["price"]
                         print('current_str_symbol_price: ', current_str_symbol_price)
                         current_symbol_price=float(current_str_symbol_price)
-                        #trying to get first 9 characters of price
-                        # try:
-                        #     this_symbol_price = current_str_symbol_price[0:10]
-                        #     print('this_symbol_price 0:10: ', this_symbol_price)
-                        # except:
-                        #     this_symbol_price = current_str_symbol_price
-                        #     print('this_symbol_price', this_symbol_price)
+    
                         try:
                             order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity,price=this_symbol_price)
                             print('sell order: ', order)
@@ -304,7 +298,7 @@ while not(keyboard.is_pressed('q')):
                         currentOrder={}
                         currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
                         #update status
-                        if  'filled' in currentOrder['status']:
+                        if  'FILLED' in currentOrder['status']:
                             aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
                             cursor.execute(aQuery)
                             #commiting to db
@@ -325,7 +319,7 @@ while not(keyboard.is_pressed('q')):
                         currentOrder={}
                         currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
                         #update status
-                        if  'filled' in currentOrder['status']:
+                        if  'FILLED' in currentOrder['status']:
                             aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
                             cursor.execute(aQuery)
                             #commiting to db
