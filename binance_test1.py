@@ -296,10 +296,12 @@ while not(keyboard.is_pressed('q')):
                         aQuery=""
                         aQuery = ("SELECT `orderId`  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
                         cursor.execute(aQuery)
-                        orderId = cursor.fetchall()
+                        result_tuple = cursor.fetchall()
+                        orderId=result_tuple[0]
                         #get order from binance
+                        print('result_tuple array: ', result_tuple[0])
                         currentOrder={}
-                        currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
+                        currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
                         #update status
                         if  'filled' in currentOrder['status']:
                             aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
