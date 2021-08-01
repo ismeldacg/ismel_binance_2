@@ -244,24 +244,32 @@ while not(keyboard.is_pressed('q')):
                             aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
                             cursor.execute(aQuery)
                             sell_filled_query = cursor.fetchall()
+                            print('sell_filled_query: ', sell_filled_query)
                         except:
                             print('not filled sell order')
                         if len(sell_filled_query)!=0:
                             print('updating selling order of ',aSymbol)
                             #updating
                             #update status
+                            query_tuple=sell_filled_query[0]
+                            print('assets_transactions query tuple: ', query_tuple)
                             try:
-                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+sell_filled_query['cummulativeQuoteQty']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
-                                cursor.execute(aQuery)
-                                #commiting to db
-                                DBconnection.commit()
-                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+sell_filled_query['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(query_tuple[7])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
                             except Exception as e:#correction on 01.08
                                 print(e)
-                                print("error inserting to db")
+                                print("error inserting cummulativeQuoteQty to db")
+                                sys.exit()
+                            try:    
+                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+query_tuple[3]+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                            except Exception as e:#correction on 01.08
+                                print(e)
+                                print("error inserting status to db")
                                 sys.exit()
                         else:
                             print('inserting selling order of ',aSymbol)
@@ -456,7 +464,7 @@ while not(keyboard.is_pressed('q')):
                     else:
                         #check status of buy order, getting current order
                         try:
-                            print('buy query to update: ', buy_query)
+                            #print('buy query to update: ', buy_query)
                             buy_query_data=buy_query[0]#getting first of tuple
                             ordertoUpdate={}
                             print('order number: ', buy_query_data[4])
