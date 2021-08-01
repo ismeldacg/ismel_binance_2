@@ -254,6 +254,7 @@ while not(keyboard.is_pressed('q')):
                             query_tuple=sell_filled_query[0]
                             print('assets_transactions query tuple: ', query_tuple)
                             try:
+                                print('UPDATE `assets_transactions` SET `cummulativeQuoteQty` ')
                                 aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(query_tuple[7])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
@@ -263,6 +264,7 @@ while not(keyboard.is_pressed('q')):
                                 print("error inserting cummulativeQuoteQty to db")
                                 sys.exit()
                             try:    
+                                print("UPDATE `assets_transactions` SET `status`=")
                                 aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+query_tuple[3]+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
@@ -270,6 +272,18 @@ while not(keyboard.is_pressed('q')):
                             except Exception as e:#correction on 01.08
                                 print(e)
                                 print("error inserting status to db")
+                                sys.exit()
+                            print('updating '+aSymbol+ 'in ref_price  with ' +ref_symbol_status)
+                            try:
+                                #store to db
+                                #query
+                                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                            except Exception as e:
+                                print(e)
+                                print("error updating sell status in `ref_price` ")
                                 sys.exit()
                         else:
                             print('inserting selling order of ',aSymbol)
@@ -283,15 +297,27 @@ while not(keyboard.is_pressed('q')):
                                 recommendation="sell"
                                 ref_symbol_status="sold"
                                 #after succcesfull sold status must be changed to sold
-                                
                             except Exception as e:
                                 print(e)
                                 print("error inserting sell order INTO assets_transactions")
                                 sys.exit()
+                            print('updating '+aSymbol+ 'in ref_price  with ' +ref_symbol_status)
+                            try:
+                                #store to db
+                                #query
+                                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                            except Exception as e:
+                                print(e)
+                                print("error updating sell status in `ref_price` ")
+                                sys.exit()
                         
-                        #updating ref price
-                        print('updating '+aSymbol+ 'in ref_price  with ' +ref_symbol_status)
+                       
                         try:
+                             #updating ref price
+                            print('updating '+aSymbol+ 'in ref_price  again ' +ref_symbol_status)
                             #store to db
                             #query
                             aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
@@ -337,16 +363,20 @@ while not(keyboard.is_pressed('q')):
                         currentOrder={}
                         currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
                         #update status
-                        if  'FILLED' in currentOrder['status']:
-                            aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
-                            cursor.execute(aQuery)
-                            #commiting to db
-                            DBconnection.commit()
-                            #update status
-                            aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
-                            cursor.execute(aQuery)
-                            #commiting to db
-                            DBconnection.commit()
+                        try:
+                            if  'FILLED' in currentOrder['status']:
+                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                                #update status
+                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                        except:
+                            pass
+
                     
                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
                     print('going to buy ', aSymbol)
@@ -444,6 +474,8 @@ while not(keyboard.is_pressed('q')):
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
+                                    #if buy_limit status is filled, update to fill
+                                    'price': '1.03390000', 'origQty': '19.00000000', 'executedQty': '19.00000000', 'cummulativeQuoteQty': '19.64410000', 'status': 'FILLED'
 
                                 except Exception as e:
                                     print('exception updating to db ', e)
