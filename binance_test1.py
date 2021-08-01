@@ -290,6 +290,7 @@ while not(keyboard.is_pressed('q')):
                                 sys.exit()
                         
                         #updating ref price
+                        print('updating '+aSymbol+ 'in ref_price  with ' +ref_symbol_status)
                         try:
                             #store to db
                             #query
