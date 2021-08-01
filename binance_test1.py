@@ -259,7 +259,7 @@ while not(keyboard.is_pressed('q')):
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
-                            except:
+                            except Exception as e:#correction on 01.08
                                 print(e)
                                 print("error inserting to db")
                                 sys.exit()
