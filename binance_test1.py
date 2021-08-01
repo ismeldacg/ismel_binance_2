@@ -277,7 +277,7 @@ while not(keyboard.is_pressed('q')):
                             try:
                                 #store to db
                                 #query
-                                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                aQuery = "UPDATE `ref_price` SET `status`='sold' WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
@@ -305,7 +305,7 @@ while not(keyboard.is_pressed('q')):
                             try:
                                 #store to db
                                 #query
-                                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                aQuery = "UPDATE `ref_price` SET `status`='sold' WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
@@ -320,7 +320,7 @@ while not(keyboard.is_pressed('q')):
                             print('updating '+aSymbol+ 'in ref_price  again ' +ref_symbol_status)
                             #store to db
                             #query
-                            aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                            aQuery = "UPDATE `ref_price` SET `status`='sold' WHERE `symbol`="+'"'+aSymbol+'"'
                             cursor.execute(aQuery)
                             #commiting to db
                             DBconnection.commit()
