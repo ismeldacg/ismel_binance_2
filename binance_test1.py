@@ -275,16 +275,23 @@ while not(keyboard.is_pressed('q')):
                                 recommendation="sell"
                                 ref_symbol_status="sold"
                                 #after succcesfull sold status must be changed to sold
+                                
+                            except Exception as e:
+                                print(e)
+                                print("error inserting sell order INTO assets_transactions")
+                                sys.exit()
+                            try:
                                 #store to db
                                 #query
                                 aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
-                            except:
+                            except Exception as e:
                                 print(e)
-                                print("error inserting to db")
+                                print("error updating sell status in `ref_price` ")
                                 sys.exit()
+
                     elif len(sell_query)!=0:
                         print('there is an open sell order, so I can not sell')
                         aQuery=""
