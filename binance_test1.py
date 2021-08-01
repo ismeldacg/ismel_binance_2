@@ -288,17 +288,19 @@ while not(keyboard.is_pressed('q')):
                                 print(e)
                                 print("error inserting sell order INTO assets_transactions")
                                 sys.exit()
-                            try:
-                                #store to db
-                                #query
-                                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
-                                cursor.execute(aQuery)
-                                #commiting to db
-                                DBconnection.commit()
-                            except Exception as e:
-                                print(e)
-                                print("error updating sell status in `ref_price` ")
-                                sys.exit()
+                        
+                        #updating ref price
+                        try:
+                            #store to db
+                            #query
+                            aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #commiting to db
+                            DBconnection.commit()
+                        except Exception as e:
+                            print(e)
+                            print("error updating sell status in `ref_price` ")
+                            sys.exit()
 
                     elif len(sell_query)!=0:
                         print('there is an open sell order, so I can not sell')
