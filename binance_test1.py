@@ -407,7 +407,7 @@ while not(keyboard.is_pressed('q')):
                                 try:
                                     #print('inserting value:' , buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
                                     values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'],0,buy_limit['price'],0)
-                                    aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                                    aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId,executedQty,price,cummulativeQuoteQty) VALUES (%s,%s,%s,%s,%s,%s,%s)"
                                     #print('buy query: ', aQuery)
                                     cursor.execute(aQuery, values)
                                 except Exception as e:
@@ -421,6 +421,12 @@ while not(keyboard.is_pressed('q')):
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
+                                    #update orderId
+                                    aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(buy_limit['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                                    cursor.execute(aQuery)
+                                    #commiting to db
+                                    DBconnection.commit()
+
                                 except Exception as e:
                                     print('exception updating to db ', e)
                                     sys.exit()
