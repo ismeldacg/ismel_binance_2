@@ -464,19 +464,24 @@ while not(keyboard.is_pressed('q')):
                             else:
                                 #update
                                 try:
-                                    #update status
-                                    aQuery = "UPDATE `assets_transactions` SET `status`='NEW' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
-                                    cursor.execute(aQuery)
-                                    #commiting to db
-                                    DBconnection.commit()
+                                   
                                     #update orderId
                                     aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(buy_limit['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
                                     #if buy_limit status is filled, update to fill
-                                    'price': '1.03390000', 'origQty': '19.00000000', 'executedQty': '19.00000000', 'cummulativeQuoteQty': '19.64410000', 'status': 'FILLED'
-
+                                    if 'FILLED' in buy_limit['status']:
+                                        print('updating status ')
+                                        #update orderId
+                                        aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                                        cursor.execute(aQuery)
+                                    else:
+                                         #update status
+                                        aQuery = "UPDATE `assets_transactions` SET `status`='NEW' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                                        cursor.execute(aQuery)
+                                        #commiting to db
+                                        DBconnection.commit()
                                 except Exception as e:
                                     print('exception updating to db ', e)
                                     sys.exit()
