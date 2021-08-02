@@ -255,7 +255,7 @@ while not(keyboard.is_pressed('q')):
                             print('assets_transactions query tuple: ', query_tuple)
                             try:
                                 print('UPDATE `assets_transactions` SET `cummulativeQuoteQty` ')
-                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(query_tuple[7])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(order['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
@@ -265,13 +265,35 @@ while not(keyboard.is_pressed('q')):
                                 sys.exit()
                             try:    
                                 print("UPDATE `assets_transactions` SET `status`=")
-                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+query_tuple[3]+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+order['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
                             except Exception as e:#correction on 01.08
                                 print(e)
                                 print("error inserting status to db")
+                                sys.exit()
+                            #updating 
+                            try:    
+                                print("UPDATE `assets_transactions` SET `orderId`=")
+                                aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(order['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                            except Exception as e:#correction on 01.08
+                                print(e)
+                                print("error inserting orderId to db")
+                                sys.exit()
+                            #updating price
+                            try:    
+                                print("UPDATE `assets_transactions` SET `price`=")
+                                aQuery = "UPDATE `assets_transactions` SET `price`="+'"'+str(order['price'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                            except Exception as e:#correction on 01.08
+                                print(e)
+                                print("error inserting price to db")
                                 sys.exit()
                             print('updating '+aSymbol+ 'in ref_price  with ' +ref_symbol_status)
                             try:
