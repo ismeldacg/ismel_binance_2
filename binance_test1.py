@@ -374,6 +374,7 @@ while not(keyboard.is_pressed('q')):
                             cursor.execute(aQuery)
                             #commiting to db
                             DBconnection.commit()
+                        #else set status still selling
                     #check if there is an open buy order
                     elif len(buy_query)!=0:
                         print('there is an open buy order, so I can not sell')
@@ -418,7 +419,7 @@ while not(keyboard.is_pressed('q')):
                         buy_query_filled = cursor.fetchall()
                     except Exception as e:
                         print('no filled buy order')
-                    if len(buy_query)==0:
+                    if len(buy_query)==0:#no new buy order
                         print('no purchase order, then we go to buy')
                         #getting the last sold price
                         cummulativeQuoteQty=[]
@@ -438,6 +439,10 @@ while not(keyboard.is_pressed('q')):
                         else:
                             cummulativeQuantity1=cummulativeQuoteQty[0]
                             cummulativeQuantity=cummulativeQuantity1[0]
+                        #checking cumulativeQuantity
+                        if cummulativeQuantity==0:
+                            cummulativeQuantity=20
+                        
                         current_str_symbol_price=symbol_price["price"]
                         print('current_str_symbol_price: ', current_str_symbol_price)
                         current_symbol_price=float(current_str_symbol_price)
@@ -524,7 +529,7 @@ while not(keyboard.is_pressed('q')):
                             print("error saving buy order of "+aSymbol+ ' to db')
                             sys.exit()
                     else:
-                        #check status of buy order, getting current order
+                        #then there is an open order, and we have to check order status
                         try:
                             #print('buy query to update: ', buy_query)
                             buy_query_data=buy_query[0]#getting first of tuple
@@ -546,10 +551,11 @@ while not(keyboard.is_pressed('q')):
                         ref_symbol_status="buy order open"
                         #after succcesfull sold status must be changed to sold
                         #store to db
-                        aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                        aQuery = "UPDATE `ref_price` SET `status`='buy order open' WHERE `symbol`="+'"'+aSymbol+'"'
                         cursor.execute(aQuery)
                         #commiting to db
                         DBconnection.commit()
+                #elif open order
                 #getting current time
                 #print("I recommend you to ",recommendation)
                 now = datetime.now()
