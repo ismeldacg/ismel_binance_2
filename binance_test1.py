@@ -362,18 +362,22 @@ while not(keyboard.is_pressed('q')):
                         print('result_tuple array: ', result_tuple[0])
                         print('orderId[4]: ', orderId[4])
                         currentOrder={}
-                        currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
-                        #update status
-                        if  'FILLED' in currentOrder['status']:
-                            aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
-                            cursor.execute(aQuery)
-                            #commiting to db
-                            DBconnection.commit()
+                        try:
+                            currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
                             #update status
-                            aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
-                            cursor.execute(aQuery)
-                            #commiting to db
-                            DBconnection.commit()
+                            if  'FILLED' in currentOrder['status']:
+                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                                #update status
+                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                        except Exception as e:
+                            print('error updating sell order: ', e)
+
                         #else set status still selling
                     #check if there is an open buy order
                     elif len(buy_query)!=0:
@@ -384,9 +388,9 @@ while not(keyboard.is_pressed('q')):
                         orderId = cursor.fetchall()
                         #get order from binance
                         currentOrder={}
-                        currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
-                        #update status
                         try:
+                            currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
+                        #update status
                             if  'FILLED' in currentOrder['status']:
                                 aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
@@ -397,8 +401,8 @@ while not(keyboard.is_pressed('q')):
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
-                        except:
-                            pass
+                        except Exception as e:
+                            print('error updating open buy order: ', e)
 
                     
                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
