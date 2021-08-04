@@ -211,7 +211,7 @@ while not(keyboard.is_pressed('q')):
                             print('this_symbol_price', this_symbol_price)
                         
                         coins_quantity_1=cummulativeQuantity/current_symbol_price
-                        coins_quantity=round(coins_quantity_1,0)-1#to avoid insuficiente funds
+                        coins_quantity=round(coins_quantity_1,0)#to avoid insuficiente funds
                         print('selling '+str(coins_quantity)+ 'of '+aSymbol)
                         #price
                         #trying to get first 9 characters of price
