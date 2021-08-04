@@ -189,7 +189,27 @@ while not(keyboard.is_pressed('q')):
                             aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
                             cummulativeQuoteQty = cursor.fetchall(aQuery)
                         except Exception as e:
-                            print('not sold order filled')
+                            print('not sold order filled, update status and break')
+                            try:
+                            currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
+                            #update status
+                            if  'FILLED' in currentOrder['status']:
+                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                                #update status
+                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                                print('breaking update of '+aSymbol)
+                                break
+                            except Exception as e:
+                                print('error updating sell order: ', e)
+                                print(aSymbol)
+                                break
+
                         if len(cummulativeQuoteQty)==0:#if there is not value or record
                             print('no filled sold order for ',aSymbol)
                             cummulativeQuantity=20#assigning a value
@@ -402,7 +422,7 @@ while not(keyboard.is_pressed('q')):
                                 #commiting to db
                                 DBconnection.commit()
                         except Exception as e:
-                            print('error updating open buy order: ', e)
+                            print('error updating open buy order: ',e)
 
                     
                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
