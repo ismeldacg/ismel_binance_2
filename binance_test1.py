@@ -187,7 +187,8 @@ while not(keyboard.is_pressed('q')):
                         this_symbol_price=""
                         try:
                             aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
-                            cummulativeQuoteQty = cursor.fetchall(aQuery)
+                            cursor.execute(aQuery)
+                            cummulativeQuoteQty = cursor.fetchall()
                         except Exception as e:
                             print('not sold order filled, update status and break')
                             sys.exit()
