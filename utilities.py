@@ -155,6 +155,30 @@ def getRefValues(DBconnection, cursor):
         ref_perf_dict[a_tuple[1]]=a_tuple[6]
     #retunring all vaues
     return ref_price_dict, ref_sd_dict, ref_perf_dict
+
+
+#funtion to update string in table, the result is commited in the procedure
+def updateDBTable_string(aTable, aColumn, aValue, aSymbol, DBconnection, cursor):
+    try:
+        aQuery = "UPDATE "+"`"+aTable+"`"+ "SET "+"`"+aColumn+"`"+ "= "+'"'+aValue+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+        cursor.execute(aQuery,(update_date_time))
+        DBconnection.commit()
+        return True
+    else:
+        return False
+
+#funtion to update string in table, the result is commited in the procedure
+def updateDBTable_number(aTable, aColumn, aValue, aSymbol, DBconnection, cursor):
+    try:
+        aQuery = "UPDATE "+"`"+aTable+"`"+ "SET "+"`"+aColumn+"`"+ "= %s WHERE `symbol`="+'"'+aSymbol+'"'
+        cursor.execute(aQuery,aValue)
+        DBconnection.commit()
+        return True
+    else:
+        return False
+
+
+
     
 
 

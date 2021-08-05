@@ -8,7 +8,7 @@ from pathlib import Path
 
 from binance.client import Client
 from datetime import datetime, timedelta
-from utilities import updateAvg, definePerformance, getRefValues
+from utilities import updateAvg, definePerformance, getRefValues, updateDBTable_number, updateDBTable_string
 
 from mysql_generic_script import (
     create_connection,
@@ -218,7 +218,7 @@ while not(keyboard.is_pressed('q')):
                         current_str_symbol_price=symbol_price["price"]
                         print('current_str_symbol_price: ', current_str_symbol_price)
                         current_symbol_price=float(current_str_symbol_price)
-    
+                        order=None
                         try:
                             order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity,price=this_symbol_price)
                             print('sell order: ', order)
@@ -241,6 +241,7 @@ while not(keyboard.is_pressed('q')):
                         #update data base or creating the dataset
                         #query if there is a filled order, 
                         sell_filled_query=[]
+                        
                         try:
                             aQuery=''
                             aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
@@ -483,11 +484,11 @@ while not(keyboard.is_pressed('q')):
                                 sys.exit()
                         #if we buy, then we can store to db
                         try:
-                            #if no new, no filled, then create at first time
+                            #if no currently registered order, then we create the first record
                             if len(buy_query)==0 and len(buy_query_filled)==0:
                                 try:
                                     #print('inserting value:' , buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
-                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'],0,buy_limit['price'],0)
+                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'],0,buy_limit['price'],buy_limit['cummulativeQuoteQty'])
                                     aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId,executedQty,price,cummulativeQuoteQty) VALUES (%s,%s,%s,%s,%s,%s,%s)"
                                     #print('buy query: ', aQuery)
                                     cursor.execute(aQuery, values)
@@ -497,9 +498,11 @@ while not(keyboard.is_pressed('q')):
                             else:
                                 #update
                                 try:
-                                   
                                     #update orderId
                                     aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(buy_limit['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                                    cursor.execute(aQuery)
+                                    #update 'cummulativeQuoteQty'
+                                    aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(buy_limit['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
@@ -509,9 +512,30 @@ while not(keyboard.is_pressed('q')):
                                         #update orderId
                                         aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                                         cursor.execute(aQuery)
+                                        #updating ref price with status bought 
+                                        #updating recommendation
+                                        recommendation="buy"
+                                        #after succcesfull bought status must be changed to bought
+                                        ref_symbol_status="bought"
+                                        #after succcesfull sold status must be changed to sold
+                                        #store to db
+                                        aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                        cursor.execute(aQuery)
+                                        #commiting to db
+                                        DBconnection.commit()
                                     else:
                                          #update status
                                         aQuery = "UPDATE `assets_transactions` SET `status`='NEW' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                                        cursor.execute(aQuery)
+                                        #commiting to db
+                                        DBconnection.commit()
+                                        #updating recommendation
+                                        recommendation="buy order open"
+                                        #after succcesfull bought status must be changed to bought
+                                        ref_symbol_status="buy order open"
+                                        #after succcesfull sold status must be changed to sold
+                                        #store to db
+                                        aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                         cursor.execute(aQuery)
                                         #commiting to db
                                         DBconnection.commit()
@@ -520,22 +544,14 @@ while not(keyboard.is_pressed('q')):
                                     sys.exit()
                             #commiting to db
                             DBconnection.commit()
-                            #updating recommendation
-                            recommendation="buy"
-                            #after succcesfull bought status must be changed to bought
-                            ref_symbol_status="bought"
-                            #after succcesfull sold status must be changed to sold
-                            #store to db
-                            aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
-                            cursor.execute(aQuery)
-                            #commiting to db
-                            DBconnection.commit()
+                            
                         except Exception as e:
                             print(e)
                             print("error saving buy order of "+aSymbol+ ' to db')
                             sys.exit()
                     else:
                         #then there is an open order, and we have to check order status
+
                         try:
                             #print('buy query to update: ', buy_query)
                             buy_query_data=buy_query[0]#getting first of tuple
