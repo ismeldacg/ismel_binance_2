@@ -589,33 +589,34 @@ while not(keyboard.is_pressed('q')):
                     aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
                     cursor.execute(aQuery)
                     result_tuple = cursor.fetchall()
-                    orderId=result_tuple[0]
-                    #get order from binance
-                    print('result_tuple array: ', result_tuple[0])
-                    print('orderId[4]: ', orderId[4])
-                    currentOrder={}
-                    try:
-                        currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
-                        #update status
-                        if  'FILLED' in currentOrder['status']:
-                            aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
-                            cursor.execute(aQuery)
-                                #commiting to db
-                            DBconnection.commit()
+                    if len(result_tuple)>0:
+                        orderId=result_tuple[0]
+                        #get order from binance
+                        print('result_tuple array: ', result_tuple[0])
+                        print('orderId[4]: ', orderId[4])
+                        currentOrder={}
+                        try:
+                            currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
                             #update status
-                            aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
-                            cursor.execute(aQuery)
-                            #commiting to db
-                            DBconnection.commit()
-                            recommendation="buy"
-                            ref_symbol_status="bought"
-                            #store recommendation to db
-                            aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
-                            cursor.execute(aQuery)
-                            #commiting to db
-                            DBconnection.commit()
-                    except Exception as e:
-                        print('error updating buy order: ', e)
+                            if  'FILLED' in currentOrder['status']:
+                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                    #commiting to db
+                                DBconnection.commit()
+                                #update status
+                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                                recommendation="buy"
+                                ref_symbol_status="bought"
+                                #store recommendation to db
+                                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                        except Exception as e:
+                            print('error updating buy order: ', e)
 
                 #getting current time
                 print("I recommend you to ",recommendation)
