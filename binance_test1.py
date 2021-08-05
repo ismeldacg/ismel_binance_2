@@ -581,6 +581,8 @@ while not(keyboard.is_pressed('q')):
                         #commiting to db
                         DBconnection.commit()
                 #elif open order
+                elif float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="buy order open") :
+                    print('recommended to sell, but buy order open, we must check the status')
                 #getting current time
                 #print("I recommend you to ",recommendation)
                 now = datetime.now()
