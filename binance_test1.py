@@ -583,6 +583,34 @@ while not(keyboard.is_pressed('q')):
                 #elif open order
                 elif float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="buy order open") :
                     print('recommended to sell, but buy order open, we must check the status')
+                    recommendation=""
+                    print('there is an open sell order, so I can not sell')
+                    aQuery=""
+                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
+                    cursor.execute(aQuery)
+                    result_tuple = cursor.fetchall()
+                    orderId=result_tuple[0]
+                    #get order from binance
+                    print('result_tuple array: ', result_tuple[0])
+                    print('orderId[4]: ', orderId[4])
+                    currentOrder={}
+                    try:
+                        currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
+                        #update status
+                        if  'FILLED' in currentOrder['status']:
+                            aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                                #commiting to db
+                            DBconnection.commit()
+                            #update status
+                            aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #commiting to db
+                            DBconnection.commit()
+                            recommendation="bought"
+                    except Exception as e:
+                        print('error updating buy order: ', e)
+
                 #getting current time
                 #print("I recommend you to ",recommendation)
                 now = datetime.now()
