@@ -199,6 +199,9 @@ while not(keyboard.is_pressed('q')):
                             cummulativeQuantity1=cummulativeQuoteQty[0]
                             cummulativeQuantity=cummulativeQuantity1[0]
                         #exchaging symbol price
+                        if cummulativeQuantity==0:
+                            cummulativeQuantity=20
+                        print('cummulativeQuantity=20: ', cummulativeQuantity)
                         current_str_symbol_price=symbol_price["price"]
                         print('current_str_symbol_price: ', current_str_symbol_price)
                         current_symbol_price=float(current_str_symbol_price)
