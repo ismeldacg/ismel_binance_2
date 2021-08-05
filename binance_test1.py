@@ -608,11 +608,16 @@ while not(keyboard.is_pressed('q')):
                             #commiting to db
                             DBconnection.commit()
                             recommendation="bought"
+                            #store recommendation to db
+                            aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                            cursor.execute(aQuery)
+                            #commiting to db
+                            DBconnection.commit()
                     except Exception as e:
                         print('error updating buy order: ', e)
 
                 #getting current time
-                #print("I recommend you to ",recommendation)
+                print("I recommend you to ",recommendation)
                 now = datetime.now()
                 #store to db
                 values = (aSymbol,now,symbol_price["price"],recommendation)
