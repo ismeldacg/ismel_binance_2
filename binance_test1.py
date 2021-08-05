@@ -608,7 +608,7 @@ while not(keyboard.is_pressed('q')):
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
-                                recommendation="buy"
+                                recommendation="do nothing"
                                 ref_symbol_status="bought"
                                 #store recommendation to db
                                 aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
