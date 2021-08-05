@@ -164,7 +164,7 @@ def updateDBTable_string(aTable, aColumn, aValue, aSymbol, DBconnection, cursor)
         cursor.execute(aQuery,(update_date_time))
         DBconnection.commit()
         return True
-    else:
+    except:
         return False
 
 #funtion to update string in table, the result is commited in the procedure
@@ -174,7 +174,7 @@ def updateDBTable_number(aTable, aColumn, aValue, aSymbol, DBconnection, cursor)
         cursor.execute(aQuery,aValue)
         DBconnection.commit()
         return True
-    else:
+    except:
         return False
 
 
