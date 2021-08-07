@@ -197,7 +197,7 @@ while not(keyboard.is_pressed('q')):
                                     ref_symbol_status="bought"
                                 else:
                                     ref_symbol_status="buy order open"
-                                    print("real status: ", ref_symbol_statu)
+                                    print("real status: ", ref_symbol_status)
                             except Exception as e:
                                 print('error getting order status: ', e)
                     except Exception as e:
@@ -246,7 +246,21 @@ while not(keyboard.is_pressed('q')):
                             #exchaging symbol price
                             if cummulativeQuantity==0:
                                 cummulativeQuantity=20
-                            print('cummulativeQuantity=20: ', cummulativeQuantity)
+                            #increasing the trading price for a symbol******************
+                            #granting we can purchase more of one specific coin
+                            if "XRPUSDT" in aSymbol:
+                                print('increasing '+aSymbol+' purchase amount to 60')
+                                cummulativeQuantity=60
+                            elif "BTTUSDT" in aSymbol:
+                                print('increasing '+aSymbol+' purchase amount to 40')
+                                cummulativeQuantity=40
+                            elif "TRXUSDT" in aSymbol:
+                                print('increasing '+aSymbol+' purchase amount to 30')
+                                cummulativeQuantity=30
+                            elif "SHIBUSDT" in aSymbol:
+                                print('increasing '+aSymbol+' purchase amount to 30')
+                                cummulativeQuantity=30
+
                             current_str_symbol_price=symbol_price["price"]
                             print('current_str_symbol_price: ', current_str_symbol_price)
                             current_symbol_price=float(current_str_symbol_price)
@@ -303,9 +317,10 @@ while not(keyboard.is_pressed('q')):
                                 #updating
                                 #update status
                                 query_tuple=sell_filled_query[0]
-                                print('assets_transactions query tuple: ', query_tuple)
+                                print('assets_transactions current query tuple in db: ', query_tuple)
                                 try:
                                     print('UPDATE `assets_transactions` SET `cummulativeQuoteQty` ')
+                                    print('order[cummulativeQuoteQty]: ', order['cummulativeQuoteQty'])
                                     aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(order['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                     cursor.execute(aQuery)
                                     #commiting to db
@@ -316,6 +331,7 @@ while not(keyboard.is_pressed('q')):
                                     sys.exit()
                                 try:    
                                     print("UPDATE `assets_transactions` SET `status`=")
+                                    print("order['status']: ", order['status'])
                                     aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+order['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                     cursor.execute(aQuery)
                                     #commiting to db
@@ -327,6 +343,7 @@ while not(keyboard.is_pressed('q')):
                                 #updating 
                                 try:    
                                     print("UPDATE `assets_transactions` SET `orderId`=")
+                                    print("order['orderId']: ", order['orderId'])
                                     aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(order['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                                     cursor.execute(aQuery)
                                     #commiting to db
@@ -495,6 +512,8 @@ while not(keyboard.is_pressed('q')):
                         #checking cumulativeQuantity
                         if cummulativeQuantity==0:
                             cummulativeQuantity=20
+
+                        
                         
                         current_str_symbol_price=symbol_price["price"]
                         print('current_str_symbol_price: ', current_str_symbol_price)
@@ -627,10 +646,10 @@ while not(keyboard.is_pressed('q')):
                 #elif open order
                 elif float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="buy order open") :
                     print('recommended to sell, but buy order open, we must check the status')
-                    recommendation=""
+                    recommendation="do nothing"
                     print('there is an open sell order, so I can not sell')
                     aQuery=""
-                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
+                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'")
                     cursor.execute(aQuery)
                     result_tuple = cursor.fetchall()
                     if len(result_tuple)>0:
