@@ -321,7 +321,7 @@ while not(keyboard.is_pressed('q')):
                                 try:
                                     print('UPDATE `assets_transactions` SET `cummulativeQuoteQty` ')
                                     print('order[cummulativeQuoteQty]: ', order['cummulativeQuoteQty'])
-                                    aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(order['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                    aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(order['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
@@ -332,7 +332,7 @@ while not(keyboard.is_pressed('q')):
                                 try:    
                                     print("UPDATE `assets_transactions` SET `status`=")
                                     print("order['status']: ", order['status'])
-                                    aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+order['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                    aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+order['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
@@ -344,7 +344,7 @@ while not(keyboard.is_pressed('q')):
                                 try:    
                                     print("UPDATE `assets_transactions` SET `orderId`=")
                                     print("order['orderId']: ", order['orderId'])
-                                    aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(order['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                    aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(order['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
@@ -355,7 +355,7 @@ while not(keyboard.is_pressed('q')):
                                 #updating price
                                 try:    
                                     print("UPDATE `assets_transactions` SET `price`=")
-                                    aQuery = "UPDATE `assets_transactions` SET `price`="+'"'+str(order['price'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                    aQuery = "UPDATE `assets_transactions` SET `price`="+'"'+str(order['price'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
