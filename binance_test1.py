@@ -489,13 +489,14 @@ while not(keyboard.is_pressed('q')):
                         buy_query_filled = cursor.fetchall()
                     except Exception as e:
                         print('no filled buy order')
+                    #we proceed to get last amount of money sold, so we 
                     if len(buy_query)==0:#no new buy order
                         print('no purchase order, then we go to buy')
                         #getting the last sold price
                         cummulativeQuoteQty=[]
                         cummulativeQuantity=0
                         try:
-                            aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
+                            aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'")
                             cursor.execute(aQuery)
                             cummulativeQuoteQty = cursor.fetchall()
                         except Exception as e:
