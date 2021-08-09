@@ -478,6 +478,7 @@ while not(keyboard.is_pressed('q')):
                                     DBconnection.commit()
                             except Exception as e:
                                 print('error updating open buy order: ',e)
+                                time.sleep(60)
 
                     
                 elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
