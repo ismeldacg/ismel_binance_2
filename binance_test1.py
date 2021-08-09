@@ -249,9 +249,9 @@ while not(keyboard.is_pressed('q')):
                             #increasing the trading price for a symbol******************
                             #granting we can purchase more of one specific coin
                             #granting we can purchase more of one specific coin
-                            if "XRPUSDT" in aSymbol and cummulativeQuantity < 60:
+                            if "XRPUSDT" in aSymbol and cummulativeQuantity < 40:
                                 print('increasing '+aSymbol+' purchase amount to 60')
-                                cummulativeQuantity=60
+                                cummulativeQuantity=40
                             elif "BTTUSDT" in aSymbol and cummulativeQuantity < 40:
                                 print('increasing '+aSymbol+' purchase amount to 40')
                                 cummulativeQuantity=40
@@ -264,9 +264,9 @@ while not(keyboard.is_pressed('q')):
                             elif "STXUSDT" in aSymbol and cummulativeQuantity < 70:
                                 print('increasing '+aSymbol+' purchase amount to 70')
                                 cummulativeQuantity=70
-                            elif "CHZUSDT" in aSymbol and cummulativeQuantity < 40:
+                            elif "CHZUSDT" in aSymbol and cummulativeQuantity < 20:
                                 print('increasing '+aSymbol+' purchase amount to 40')
-                                cummulativeQuantity=40
+                                cummulativeQuantity=20
 
                             current_str_symbol_price=symbol_price["price"]
                             print('current_str_symbol_price: ', current_str_symbol_price)
