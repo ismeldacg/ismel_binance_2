@@ -161,49 +161,49 @@ while not(keyboard.is_pressed('q')):
                 if float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="bought") :
                     #query to know if there is an order
                     #given that status can change in thee cycle, after assigning the variable we check the order first
-                    try:
-                        aQuery=''
-                        aQuery = ("SELECT `orderId` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'")
-                        cursor.execute(aQuery)
-                        buy_order = cursor.fetchall()
-                        if len(buy_order)==0:#if there is not value or record
-                            print('no order number for ',aSymbol)
-                        else:  
-                            current_order_ID=buy_order[0]
-                            print('checking status of ',aSymbol)
-                            #must be a funciton, check status
-                            try:
-                                currentOrder = client.get_order(symbol=aSymbol,orderId=current_order_ID)
-                            #update status
-                                if  'FILLED' in currentOrder['status']:
-                                    aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
-                                    cursor.execute(aQuery)
-                                        #commiting to db
-                                    DBconnection.commit()
-                                    #update status
-                                    aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
-                                    cursor.execute(aQuery)
-                                    #commiting to db
-                                    DBconnection.commit()
-                                    recommendation="do nothing"
-                                    ref_symbol_status="bought"
-                                    #store recommendation to db
-                                    aQuery = "UPDATE `ref_price` SET `status`='bought' WHERE `symbol`="+'"'+aSymbol+'"'
-                                    cursor.execute(aQuery)
-                                    #commiting to db
-                                    DBconnection.commit()
-                                    #updating status
-                                    ref_status_dict[symbol_price["symbol"]]="bought"
-                                    ref_symbol_status="bought"
-                                else:
-                                    ref_symbol_status="buy order open"
-                                    print("real status: ", ref_symbol_status)
-                            except Exception as e:
-                                print('error getting order status: ')#no e, then no detailed error printed
-                                ref_symbol_status="buy order open"
-                                time.sleep(60)
-                    except Exception as e:
-                        print('exception because of no sell order')
+                    # try:
+                    #     aQuery=''
+                    #     aQuery = ("SELECT `orderId` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'")
+                    #     cursor.execute(aQuery)
+                    #     buy_order = cursor.fetchall()
+                    #     if len(buy_order)==0:#if there is not value or record
+                    #         print('no order number for ',aSymbol)
+                    #     else:  
+                    #         current_order_ID=buy_order[0]
+                    #         print('checking status of ',aSymbol)
+                    #         #must be a funciton, check status
+                    #         try:
+                    #             currentOrder = client.get_order(symbol=aSymbol,orderId=current_order_ID)
+                    #         #update status
+                    #             if  'FILLED' in currentOrder['status']:
+                    #                 aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                    #                 cursor.execute(aQuery)
+                    #                     #commiting to db
+                    #                 DBconnection.commit()
+                    #                 #update status
+                    #                 aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                    #                 cursor.execute(aQuery)
+                    #                 #commiting to db
+                    #                 DBconnection.commit()
+                    #                 recommendation="do nothing"
+                    #                 ref_symbol_status="bought"
+                    #                 #store recommendation to db
+                    #                 aQuery = "UPDATE `ref_price` SET `status`='bought' WHERE `symbol`="+'"'+aSymbol+'"'
+                    #                 cursor.execute(aQuery)
+                    #                 #commiting to db
+                    #                 DBconnection.commit()
+                    #                 #updating status
+                    #                 ref_status_dict[symbol_price["symbol"]]="bought"
+                    #                 ref_symbol_status="bought"
+                    #             else:
+                    #                 ref_symbol_status="buy order open"
+                    #                 print("real status: ", ref_symbol_status)
+                    #         except Exception as e:
+                    #             print('error getting order status: ')#no e, then no detailed error printed
+                    #             ref_symbol_status="buy order open"
+                    #             time.sleep(60)
+                    # except Exception as e:
+                    #     print('exception because of no sell order')
 
                     #supposed here it is really checked
                     if ref_symbol_status=="bought":
