@@ -200,6 +200,7 @@ while not(keyboard.is_pressed('q')):
                                     print("real status: ", ref_symbol_status)
                             except Exception as e:
                                 print('error getting order status: ')#no e, then no detailed error printed
+                                ref_symbol_status="buy order open"
                     except Exception as e:
                         print('exception because of no sell order')
 
