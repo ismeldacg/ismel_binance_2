@@ -315,7 +315,7 @@ while not(keyboard.is_pressed('q')):
                             
                             try:
                                 aQuery=''
-                                aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
+                                aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'")
                                 cursor.execute(aQuery)
                                 sell_filled_query = cursor.fetchall()
                                 print('sell_filled_query: ', sell_filled_query)
@@ -329,6 +329,8 @@ while not(keyboard.is_pressed('q')):
                                 print('assets_transactions current query tuple in db: ', query_tuple)
                                 try:
                                     print('UPDATE `assets_transactions` SET `cummulativeQuoteQty` ')
+                                    if order['cummulativeQuoteQty']==0:
+                                        cummulativeQuoteQty=coins_quantity*ref_symbol_price
                                     print('order[cummulativeQuoteQty]: ', order['cummulativeQuoteQty'])
                                     aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(order['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
                                     cursor.execute(aQuery)
@@ -599,6 +601,8 @@ while not(keyboard.is_pressed('q')):
                                     aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(buy_limit['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                                     cursor.execute(aQuery)
                                     #update 'cummulativeQuoteQty'
+                                    if order['cummulativeQuoteQty']==0:
+                                        cummulativeQuoteQty=coins_quantity*ref_symbol_price
                                     aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(buy_limit['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                                     cursor.execute(aQuery)
                                     #commiting to db
