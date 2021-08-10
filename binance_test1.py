@@ -375,6 +375,17 @@ while not(keyboard.is_pressed('q')):
                                     print("error inserting price to db")
                                     sys.exit()
                                 print('updating '+aSymbol+ 'in ref_price  with ' +ref_symbol_status)
+                                try:    
+                                    print("UPDATE `assets_transactions` SET `executedQty`=")
+                                    aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(order['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                                    cursor.execute(aQuery)
+                                    #commiting to db
+                                    DBconnection.commit()
+                                except Exception as e:#correction on 01.08
+                                    print(e)
+                                    print("error inserting price to db")
+                                    sys.exit()
+                                print('updating '+aSymbol+ 'in ref_price  with ' +ref_symbol_status)
                                 try:
                                     #store to db
                                     #query
@@ -587,7 +598,7 @@ while not(keyboard.is_pressed('q')):
                             if len(buy_query)==0 and len(buy_query_filled)==0:
                                 try:
                                     #print('inserting value:' , buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'])
-                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'],0,buy_limit['price'],buy_limit['cummulativeQuoteQty'])
+                                    values = (buy_limit['symbol'],'BUY',buy_limit['status'],buy_limit['orderId'],coins_quantity,buy_limit['price'],buy_limit['cummulativeQuoteQty'])
                                     aQuery = "INSERT INTO assets_transactions (symbol,side,status, orderId,executedQty,price,cummulativeQuoteQty) VALUES (%s,%s,%s,%s,%s,%s,%s)"
                                     #print('buy query: ', aQuery)
                                     cursor.execute(aQuery, values)
@@ -600,6 +611,14 @@ while not(keyboard.is_pressed('q')):
                                     #update orderId
                                     aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(buy_limit['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                                     cursor.execute(aQuery)
+                                    #commiting to db
+                                    DBconnection.commit()
+                                    #update purchased quantity
+                                    #update orderId
+                                    aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(buy_limit['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                                    cursor.execute(aQuery)
+                                    #commiting to db
+                                    DBconnection.commit()
                                     #update 'cummulativeQuoteQty'
                                     if buy_limit['cummulativeQuoteQty']==0:
                                         cummulativeQuoteQty=coins_quantity*ref_symbol_price
