@@ -232,6 +232,8 @@ while not(keyboard.is_pressed('q')):
                             cummulativeQuoteQty=[]
                             cummulativeQuantity=0
                             this_symbol_price=""
+                            executedQuantity=[]
+                            last_buy_executed_Quantity=0
                             try:
                                 aQuery = ("SELECT `cummulativeQuoteQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
                                 cursor.execute(aQuery)
@@ -245,9 +247,23 @@ while not(keyboard.is_pressed('q')):
                             else:  
                                 cummulativeQuantity1=cummulativeQuoteQty[0]
                                 cummulativeQuantity=cummulativeQuantity1[0]
-                            #exchaging symbol price
-                            if cummulativeQuantity==0:
-                                cummulativeQuantity=20
+                            #getting executedQuantity
+                            try:
+                                aQuery = ("SELECT `executedQty` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'")
+                                cursor.execute(aQuery)
+                                executedQty = cursor.fetchall()
+                            except Exception as e:
+                                print('not excutedQty gotten')
+                                executedQty=[]
+                                sys.exit()
+                            if len(executedQty)==0:#if there is not value or record
+                                print('no executedQty for ',aSymbol)
+                                last_buy_executed_Quantity=0#assigning a value
+                            else:  
+                                last_buy_executed_Quantity1=executedQty[0]
+                                last_buy_executed_Quantity=last_buy_executed_Quantity1[0]
+
+                           
                             #increasing the trading price for a symbol******************
                             #granting we can sell more of one specific coin
                             #granting we can sell more of one specific coin
@@ -280,9 +296,14 @@ while not(keyboard.is_pressed('q')):
                             except:
                                 this_symbol_price = current_str_symbol_price
                                 print('this_symbol_price', this_symbol_price)
-                            
+                            #coins_quantity must be less or equal to the last buy quantity
                             coins_quantity_1=cummulativeQuantity/current_symbol_price
                             coins_quantity=round(coins_quantity_1,0)#to avoid insuficiente funds
+
+                            if  coins_quantity > last_buy_executed_Quantity  and last_buy_executed_Quantity !=0:
+                                coins_quantity=last_buy_executed_Quantity
+                                print('selling last purchase quantity, and not the calculated')
+
                             print('selling '+str(coins_quantity)+ 'of '+aSymbol)
                             #price
                             #trying to get first 9 characters of price
