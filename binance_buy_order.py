@@ -85,31 +85,19 @@ try:
     #     else:
     #         print('selling yet')
     #     time.sleep(10)
-    # order = client.order_limit_sell(symbol='SHIBUSDT',quantity=1700000,price='0.00000617')
-    # print("order: ", order)
-    # orderId = order["orderId"]
-    #print('Sell order placed at {}\n'.format(sellPrice))
-    # while True:
-    currentOrder = client.get_order(symbol='MBLUSDT',orderId=114655204)
-    if currentOrder['status']=='FILLED':
-        print("Sold: {} at {}".format(currentOrder['executedQty'],currentOrder['orderId']))
-    #         break
-    #         print(".")
-    # # buy_limit = client.create_order(
-    # #     symbol='SHIBUSDT',
-    # #     side='BUY',
-    # #     type='LIMIT',
-    # #     timeInForce='GTC',
-    # #     quantity=1700000,
-    # #     price='0.00000615')
-    # # print("buy_limit: ", buy_limit)
-    # currentOrder = client.get_order(symbol='SHIBUSDT',orderId='156166591')
-
-    # print('current order: ', currentOrder)
-
-    # if currentOrder['status']=='FILLED':
-    #     print("vendida")
-    #     print(".")
+    print('please, provide coin coin symbol')
+    aSymbol = input()
+    symbol_price = client.get_symbol_ticker(symbol=aSymbol)
+    print(aSymbol, ' has the current price: ', symbol_price['price'])
+    print('how many '+aSymbol+' do you want to sell?')
+    aQuantity = input()
+    print('proceeding to sell',aQuantity, ' ', aSymbol, 'do you agree? (y/n)')
+    aDecision = input()
+    if 'y' in aDecision:
+        order = client.order_limit_sell(symbol=aSymbol,quantity=aQuantity,price=str(symbol_price['price']))
+    else:
+        print('nothing done')
+    print('result: ', order)
 
 except BinanceAPIException as e:
     # error handling goes here
@@ -118,9 +106,3 @@ except BinanceOrderException as e:
     # error handling goes here
     print(e)
 
-
-    #buy_limit:  {'symbol': 'SHIBUSDT', 'orderId': 156166591, 'orderListId': -1, 'clientOrderId': 'sOC70URxat2NLgniHF55wd', 'transactTime': 1627537674447, 'price': '0.00000615', 'origQty': '1700000.00', 'executedQty': '0.00', 'cummulativeQuoteQty': '0.00000000', 'status': 'NEW', 'timeInForce': 'GTC', 'type': 'LIMIT', 'side': 'BUY', 'fills': []}
-
-
-   # order:  {'symbol': 'SHIBUSDT', 'orderId': 156175083, 'orderListId': -1, 'clientOrderId': 'O4VHkt2ix9H4Ijv4g4hnYj', 'transactTime': 1627539888395, 'price': '0.00000617', 'origQty': '1700000.00', 'executedQty': '1700000.00', 'cummulativeQuoteQty': '10.48900000', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'LIMIT', 'side': 
-##'SELL', 'fills': [{'price': '0.00000617', 'qty': '1700000.00', 'commission': '0.01048900', 'commissionAsset': 'USDT', 'tradeId': 54944998}]}
