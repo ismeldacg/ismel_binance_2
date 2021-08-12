@@ -267,22 +267,22 @@ while not(keyboard.is_pressed('q')):
                             #increasing the trading price for a symbol******************
                             #granting we can sell more of one specific coin
                             #granting we can sell more of one specific coin
-                            if "XRPUSDT" in aSymbol and cummulativeQuantity < 40:
+                            if "XRPUSDT" in aSymbol and cummulativeQuantity < 60:
+                                print('increasing '+aSymbol+' sell amount to 60')
+                                cummulativeQuantity=60
+                            elif "BTTUSDT" in aSymbol and cummulativeQuantity < 40:
                                 print('increasing '+aSymbol+' sell amount to 40')
                                 cummulativeQuantity=40
-                            #elif "BTTUSDT" in aSymbol and cummulativeQuantity < 40:
-                                #print('increasing '+aSymbol+' sell amount to 40')
-                                #cummulativeQuantity=40
-                            #elif "TRXUSDT" in aSymbol and cummulativeQuantity < 30:
-                                #print('increasing '+aSymbol+' sell amount to 30')
-                                #cummulativeQuantity=30
+                            elif "TRXUSDT" in aSymbol and cummulativeQuantity < 30:
+                                print('increasing '+aSymbol+' sell amount to 30')
+                                cummulativeQuantity=30
                             elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 60:
                                 print('increasing '+aSymbol+' sell amount to 60')
                                 cummulativeQuantity=60
-                            #elif "STXUSDT" in aSymbol and cummulativeQuantity < 70:
-                                #print('increasing '+aSymbol+' sell amount to 70')
-                                #cummulativeQuantity=70
-                            elif "CHZUSDT" in aSymbol and cummulativeQuantity < 20:
+                            elif "STXUSDT" in aSymbol and cummulativeQuantity < 70:
+                                print('increasing '+aSymbol+' sell amount to 70')
+                                cummulativeQuantity=70
+                            elif "CHZUSDT" in aSymbol and cummulativeQuantity < 40:
                                 print('increasing '+aSymbol+' sell amount to 40')
                                 cummulativeQuantity=40
 
@@ -299,11 +299,10 @@ while not(keyboard.is_pressed('q')):
                             #coins_quantity must be less or equal to the last buy quantity
                             coins_quantity_1=cummulativeQuantity/current_symbol_price
                             coins_quantity=round(coins_quantity_1,0)#to avoid insuficiente funds
-
+                            #I should not sell more than what I purchased
                             if  coins_quantity > last_buy_executed_Quantity  and last_buy_executed_Quantity !=0:
                                 coins_quantity=last_buy_executed_Quantity
                                 print('selling last purchase quantity, and not the calculated')
-
                             print('selling '+str(coins_quantity)+ 'of '+aSymbol)
                             #price
                             #trying to get first 9 characters of price
