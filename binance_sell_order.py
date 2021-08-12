@@ -64,27 +64,6 @@ cursor = DBconnection.cursor()
 
 
 try:
-    # while True:
-    #     sell_query = ""
-    #     aQuery =""
-    #     aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`='VETUSDT' and `side`='SELL' and `status`='NEW'")
-    #     sell_query=execute_user_query(connection=DBconnection, aQuery=aQuery)
-    #     aQuery =""
-    #     if len(sell_query)==0:
-    #         print('no sell order')
-    #         buy_query = ""
-    #         aQuery =""
-    #         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`='VETUSDT' and `side`='BUY' and `status`='NEW'")
-    #         buy_query=execute_user_query(connection=DBconnection, aQuery=aQuery)
-    #         aQuery =""
-    #         if len(buy_query)==0:
-    #             print('no purchase order, then we go to sell')
-    #         else:
-    #             print('buying yet')
-
-    #     else:
-    #         print('selling yet')
-    #     time.sleep(10)
     print('please, provide coin coin symbol')
     aSymbol = input()
     symbol_price = client.get_symbol_ticker(symbol=aSymbol)
