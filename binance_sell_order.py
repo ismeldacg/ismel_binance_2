@@ -71,6 +71,7 @@ try:
     print('how many '+aSymbol+' do you want to sell?')
     aQuantity = input()
     print('proceeding to sell',aQuantity, ' ', aSymbol, 'do you agree? (y/n)')
+    order=[]
     aDecision = input()
     if 'y' in aDecision:
         order = client.order_limit_sell(symbol=aSymbol,quantity=aQuantity,price=str(symbol_price['price']))
