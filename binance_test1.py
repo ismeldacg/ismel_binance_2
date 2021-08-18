@@ -159,53 +159,6 @@ while not(keyboard.is_pressed('q')):
                 #agregar más parentesis, seleccionar una moneda y fijarle el precio para probar
                 print('evaluating ', aSymbol)
                 if float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="bought") :
-                    #query to know if there is an order
-                    #given that status can change in thee cycle, after assigning the variable we check the order first
-                    # try:
-                    #     aQuery=''
-                    #     aQuery = ("SELECT `orderId` FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'")
-                    #     cursor.execute(aQuery)
-                    #     buy_order = cursor.fetchall()
-                    #     if len(buy_order)==0:#if there is not value or record
-                    #         print('no order number for ',aSymbol)
-                    #     else:  
-                    #         current_order_ID=buy_order[0]
-                    #         print('checking status of ',aSymbol)
-                    #         #must be a funciton, check status
-                    #         try:
-                    #             currentOrder = client.get_order(symbol=aSymbol,orderId=current_order_ID)
-                    #         #update status
-                    #             if  'FILLED' in currentOrder['status']:
-                    #                 aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
-                    #                 cursor.execute(aQuery)
-                    #                     #commiting to db
-                    #                 DBconnection.commit()
-                    #                 #update status
-                    #                 aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
-                    #                 cursor.execute(aQuery)
-                    #                 #commiting to db
-                    #                 DBconnection.commit()
-                    #                 recommendation="do nothing"
-                    #                 ref_symbol_status="bought"
-                    #                 #store recommendation to db
-                    #                 aQuery = "UPDATE `ref_price` SET `status`='bought' WHERE `symbol`="+'"'+aSymbol+'"'
-                    #                 cursor.execute(aQuery)
-                    #                 #commiting to db
-                    #                 DBconnection.commit()
-                    #                 #updating status
-                    #                 ref_status_dict[symbol_price["symbol"]]="bought"
-                    #                 ref_symbol_status="bought"
-                    #             else:
-                    #                 ref_symbol_status="buy order open"
-                    #                 print("real status: ", ref_symbol_status)
-                    #         except Exception as e:
-                    #             print('error getting order status: ')#no e, then no detailed error printed
-                    #             ref_symbol_status="buy order open"
-                    #             time.sleep(60)
-                    # except Exception as e:
-                    #     print('exception because of no sell order')
-
-                    #supposed here it is really checked
                     if ref_symbol_status=="bought":
                         print("go to sell ", aSymbol)
                         sell_query=[]
@@ -267,9 +220,9 @@ while not(keyboard.is_pressed('q')):
                             #increasing the trading price for a symbol******************
                             #granting we can sell more of one specific coin
                             #granting we can sell more of one specific coin
-                            if "XRPUSDT" in aSymbol and cummulativeQuantity < 60:
-                                print('increasing '+aSymbol+' sell amount to 60')
-                                cummulativeQuantity=60
+                            if "XRPUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
                             elif "BTTUSDT" in aSymbol and cummulativeQuantity < 40:
                                 print('increasing '+aSymbol+' sell amount to 40')
                                 cummulativeQuantity=40
@@ -279,12 +232,22 @@ while not(keyboard.is_pressed('q')):
                             elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 60:
                                 print('increasing '+aSymbol+' sell amount to 60')
                                 cummulativeQuantity=60
-                            elif "STXUSDT" in aSymbol and cummulativeQuantity < 70:
-                                print('increasing '+aSymbol+' sell amount to 70')
-                                cummulativeQuantity=70
+                            elif "STXUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
                             elif "CHZUSDT" in aSymbol and cummulativeQuantity < 40:
                                 print('increasing '+aSymbol+' sell amount to 40')
                                 cummulativeQuantity=40
+                            elif "DOGEUSDT" in aSymbol and cummulativeQuantity < 50:
+                                print('increasing '+aSymbol+' sell amount to 50')
+                                cummulativeQuantity=50
+                            elif "VETUSDT" in aSymbol and cummulativeQuantity < 50:
+                                print('increasing '+aSymbol+' sell amount to 50')
+                                cummulativeQuantity=50
+                            elif "SANDUSDT" in aSymbol and cummulativeQuantity < 50:
+                                print('increasing '+aSymbol+' sell amount to 50')
+                                cummulativeQuantity=50
+
 
                             current_str_symbol_price=symbol_price["price"]
                             print('current_str_symbol_price: ', current_str_symbol_price)
@@ -313,11 +276,14 @@ while not(keyboard.is_pressed('q')):
                             try:
                                 order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity,price=this_symbol_price)
                                 print('sell order: ', order)
+
                             except Exception as e:
                                 if 'APIError(code=-2010)' in str(e):
                                     try:
                                         coins_quantity2=coins_quantity-1
                                         order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity2,price=this_symbol_price)
+                                        recommendation="sell"
+                                        ref_symbol_status="sold"
                                         print('sell order 2: ', order)
                                     except Exception as e:
                                         print(e)
@@ -343,6 +309,8 @@ while not(keyboard.is_pressed('q')):
                                 print('not filled sell order')
                             if len(sell_filled_query)!=0:
                                 print('updating selling order of ',aSymbol)
+                                recommendation="sell"
+                                ref_symbol_status="sold"
                                 #updating
                                 #update status
                                 query_tuple=sell_filled_query[0]
@@ -559,9 +527,9 @@ while not(keyboard.is_pressed('q')):
 
                         #increasing the trading price for a symbol******************
                         #granting we can purchase more of one specific coin
-                        if "XRPUSDT" in aSymbol and cummulativeQuantity < 60:
-                            print('increasing '+aSymbol+' purchase amount to 60')
-                            cummulativeQuantity=60
+                        if "XRPUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
                         elif "BTTUSDT" in aSymbol and cummulativeQuantity < 40:
                             print('increasing '+aSymbol+' purchase amount to 40')
                             cummulativeQuantity=40
@@ -571,15 +539,22 @@ while not(keyboard.is_pressed('q')):
                         elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 60:
                             print('increasing '+aSymbol+' purchase amount to 60')
                             cummulativeQuantity=60
-                        elif "STXUSDT" in aSymbol and cummulativeQuantity < 70:
-                            print('increasing '+aSymbol+' purchase amount to 70')
-                            cummulativeQuantity=70
+                        elif "STXUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
                         elif "CHZUSDT" in aSymbol and cummulativeQuantity < 40:
                             print('increasing '+aSymbol+' purchase amount to 40')
                             cummulativeQuantity=40
-
-                        
-                        
+                        elif "DOGEUSDT" in aSymbol and cummulativeQuantity < 50:
+                            print('increasing '+aSymbol+' sell amount to 50')
+                            cummulativeQuantity=50
+                        elif "VETUSDT" in aSymbol and cummulativeQuantity < 50:
+                            print('increasing '+aSymbol+' sell amount to 50')
+                            cummulativeQuantity=50
+                        elif "SANDUSDT" in aSymbol and cummulativeQuantity < 50:
+                            print('increasing '+aSymbol+' sell amount to 50')
+                            cummulativeQuantity=50
+                            
                         current_str_symbol_price=symbol_price["price"]
                         print('current_str_symbol_price: ', current_str_symbol_price)
                         current_symbol_price=float(current_str_symbol_price)
@@ -605,6 +580,8 @@ while not(keyboard.is_pressed('q')):
                                 quantity=coins_quantity,
                                 price=this_symbol_price)
                             print('buy order ',buy_limit)
+                            recommendation="buy"
+                            ref_symbol_status="bought"
                         except Exception as e:
                             print(e)
                             print("error buying ", aSymbol)
