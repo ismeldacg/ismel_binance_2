@@ -482,7 +482,7 @@ while not(keyboard.is_pressed('q')):
                                 time.sleep(60)
 
                     
-                elif (float(symbol_price["price"]) < ref_symbol_price) and (ref_symbol_status=="sold" or ref_symbol_status==""):
+                elif (float(symbol_price["price"]) < ref_symbol_price-(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="sold" or ref_symbol_status==""):
                     print('going to buy ', aSymbol)
                     #query to know if there is an order
                     buy_query=[]
