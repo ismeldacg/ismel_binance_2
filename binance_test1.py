@@ -246,6 +246,9 @@ while not(keyboard.is_pressed('q')):
                                 cummulativeQuantity=80
                             elif "SANDUSDT" in aSymbol and cummulativeQuantity < 80:
                                 print('increasing '+aSymbol+' sell amount to 80')
+                                cummulativeQuantity=
+                            elif "MBLUSDT" in aSymbol and cummulativeQuantity < 80:
+                                print('increasing '+aSymbol+' sell amount to 80')
                                 cummulativeQuantity=80
 
 
@@ -553,6 +556,9 @@ while not(keyboard.is_pressed('q')):
                             cummulativeQuantity=80
                         elif "SANDUSDT" in aSymbol and cummulativeQuantity < 80:
                             print('increasing '+aSymbol+' sell amount to 80')
+                            cummulativeQuantity=80
+                        elif "MBLUSDT" in aSymbol and cummulativeQuantity < 80:
+                            print('increasing '+aSymbol+' purchase amount to 80')
                             cummulativeQuantity=80
                             
                         current_str_symbol_price=symbol_price["price"]
