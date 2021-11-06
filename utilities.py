@@ -66,7 +66,7 @@ def updateAvg(DBconnection, cursor):
                 update_date_time=datetime.today()
                 #query
                 aQuery = "UPDATE `ref_price` SET `updated`= "+'"'+str(update_date_time)+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
-                cursor.execute(aQuery,(update_date_time))
+                cursor.execute(aQuery)#,(update_date_time))
             else:
                 print("average_price of "+aSymbol+" non available")
         except Exception as e:

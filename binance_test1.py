@@ -222,30 +222,30 @@ while not(keyboard.is_pressed('q')):
                             if "XRPUSDT" in aSymbol and cummulativeQuantity < 100:
                                 print('increasing '+aSymbol+' sell amount to 100')
                                 cummulativeQuantity=100
-                            elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 80:
-                                print('increasing '+aSymbol+' sell amount to 80')
-                                cummulativeQuantity=80
+                            elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
                             elif "STXUSDT" in aSymbol and cummulativeQuantity < 100:
                                 print('increasing '+aSymbol+' sell amount to 100')
                                 cummulativeQuantity=100
-                            elif "DOGEUSDT" in aSymbol and cummulativeQuantity < 90:
-                                print('increasing '+aSymbol+' sell amount to 90')
-                                cummulativeQuantity=90
-                            elif "VETUSDT" in aSymbol and cummulativeQuantity < 80:
-                                print('increasing '+aSymbol+' sell amount to 80')
-                                cummulativeQuantity=80
-                            elif "SANDUSDT" in aSymbol and cummulativeQuantity < 80:
-                                print('increasing '+aSymbol+' sell amount to 80')
-                                cummulativeQuantity=80
-                            elif "MBLUSDT" in aSymbol and cummulativeQuantity < 70:
-                                print('increasing '+aSymbol+' sell amount to 70')
-                                cummulativeQuantity=70
-                            elif "KLAYUSDT" in aSymbol and cummulativeQuantity < 80:
-                                print('increasing '+aSymbol+' sell amount to 80')
-                                cummulativeQuantity=80
-                            elif "HBARUSDT" in aSymbol and cummulativeQuantity < 80:
-                                print('increasing '+aSymbol+' sell amount to 80')
-                                cummulativeQuantity=80
+                            elif "DOGEUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
+                            elif "VETUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
+                            elif "SANDUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
+                            elif "MBLUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
+                            elif "KLAYUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
+                            elif "HBARUSDT" in aSymbol and cummulativeQuantity < 100:
+                                print('increasing '+aSymbol+' sell amount to 100')
+                                cummulativeQuantity=100
                             elif "BTTUSDT" in aSymbol and cummulativeQuantity < 100:
                                 print('increasing '+aSymbol+' sell amount to 100')
                                 cummulativeQuantity=100
@@ -541,30 +541,30 @@ while not(keyboard.is_pressed('q')):
                         if "XRPUSDT" in aSymbol and cummulativeQuantity < 100:
                             print('increasing '+aSymbol+' purchase amount to 100')
                             cummulativeQuantity=100
-                        elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 80:
-                            print('increasing '+aSymbol+' purchase amount to 80')
-                            cummulativeQuantity=80
+                        elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
                         elif "STXUSDT" in aSymbol and cummulativeQuantity < 100:
                             print('increasing '+aSymbol+' purchase amount to 100')
                             cummulativeQuantity=100
-                        elif "DOGEUSDT" in aSymbol and cummulativeQuantity < 90:
-                            print('increasing '+aSymbol+' purchase amount to 90')
-                            cummulativeQuantity=90
-                        elif "VETUSDT" in aSymbol and cummulativeQuantity < 80:
-                            print('increasing '+aSymbol+' purchase amount to 80')
-                            cummulativeQuantity=80
-                        elif "SANDUSDT" in aSymbol and cummulativeQuantity < 80:
-                            print('increasing '+aSymbol+' purchase amount to 80')
-                            cummulativeQuantity=80
-                        elif "MBLUSDT" in aSymbol and cummulativeQuantity < 70:
-                            print('increasing '+aSymbol+' purchase amount to 70')
-                            cummulativeQuantity=70
-                        elif "KLAYUSDT" in aSymbol and cummulativeQuantity < 80:
-                            print('increasing '+aSymbol+' purchase amount to 80')
-                            cummulativeQuantity=80
-                        elif "HBARUSDT" in aSymbol and cummulativeQuantity < 80:
-                            print('increasing '+aSymbol+' purchase amount to 80')
-                            cummulativeQuantity=80
+                        elif "DOGEUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
+                        elif "VETUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
+                        elif "SANDUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
+                        elif "MBLUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
+                        elif "KLAYUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
+                        elif "HBARUSDT" in aSymbol and cummulativeQuantity < 100:
+                            print('increasing '+aSymbol+' purchase amount to 100')
+                            cummulativeQuantity=100
                         elif "BTTUSDT" in aSymbol and cummulativeQuantity < 100:
                             print('increasing '+aSymbol+' purchase amount to 100')
                             cummulativeQuantity=100
