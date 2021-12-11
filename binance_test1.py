@@ -108,7 +108,8 @@ while not(keyboard.is_pressed('q')):
     #current date 
     #print('last_update_date: ', last_update_list[0])
     #testing if must be updated
-    if (datetime.today()-last_update_list[0])>timedelta(days=1):
+    #changed timedelta to hours on 11.12.2020
+    if (datetime.today()-last_update_list[0])>timedelta(hours=1):
         #proceeding to update
         print("going to update******")
         updateAvg(DBconnection, cursor)
