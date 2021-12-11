@@ -17,7 +17,7 @@ def updateAvg(DBconnection, cursor):
     #first we get current date, and move 7 days back
     #ref_day = datetime.today() - timedelta(days=7)
     ref_day = datetime.today() - timedelta(days=1)
-    #print("ref day: ",ref_day)
+    print("ref day: ",ref_day)
     #obtaining symbols from db
     try:
         results_query = ""
