@@ -35,12 +35,13 @@ last_update_list=last_updated[0]
 #current date 
 print('last_update_list: ', last_update_list[0])
 #testing if must be updated
-if (last_update_list[0]-datetime.today())<timedelta(days=1):
-    print("no one day difference to update yet")
-    sys.exit()
+#if (last_update_list[0]-datetime.today())<timedelta(days=1):
+#    print("no one day difference to update yet")
+#    sys.exit()
 print('proceeding to update ')
 #first we get current date, and move 7 days back
-ref_day = datetime.today() - timedelta(days=7)
+#updated on 11.12.2021 to one day reference
+ref_day = datetime.today() - timedelta(days=1)
 print("ref day: ",ref_day)
 #obtaining symbols from db
 results_query = ""
