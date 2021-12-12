@@ -452,6 +452,8 @@ while not(keyboard.is_pressed('q')):
                             currentOrder={}
                             try:
                                 currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
+                                #12.12.2021
+                                print("sell currentOrder response: ", currentOrder)
                                 #update status
                                 if  'FILLED' in currentOrder['status']:
                                     aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
@@ -478,6 +480,7 @@ while not(keyboard.is_pressed('q')):
                             currentOrder={}
                             try:
                                 currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
+                                print("buy currentOrder response: ", currentOrder)
                             #update status
                                 if  'FILLED' in currentOrder['status']:
                                     aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
