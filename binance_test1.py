@@ -182,7 +182,20 @@ while not(keyboard.is_pressed('q')):
                         #print('no exception in sell query 1')
 
                         if len(sell_query)==0 and len(buy_query)==0:
-                            print('no active purchase order, no active sell order')
+                            print('no purchase or sell order new 12.12.2021')
+                            #we have to check if there is a "buy order open" in ref_price table, then break
+                            try:
+                                aQuery = ("SELECT * FROM `ref_price` WHERE `symbol`="+'"'+aSymbol+'"'+" and `status`='buy order open'")
+                                cursor.execute(aQuery)
+                                current_status = cursor.fetchall()
+                                #if buy order open, then we must break and return
+                                if current_status:
+                                    print("there is a buy order open, should we check it? ",current_status)
+                                    break
+                            except Exception as e:
+                                print('no buy order open')
+                                continue
+
                             cummulativeQuoteQty=[]
                             cummulativeQuantity=0
                             this_symbol_price=""
