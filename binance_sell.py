@@ -31,11 +31,10 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
             current_status = cursor.fetchall()
             #if buy order open, then we must break and return
             if current_status:
-                print("there is a buy order open, should we check it? ",current_status)
-                break
+                print("there is a buy order open, we must not sell anything? ",current_status)
+                return
         except Exception as e:
             print('no buy order open')
-            continue
         cummulativeQuoteQty=[]
         cummulativeQuantity=0
         this_symbol_price=""
@@ -46,8 +45,8 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
             cursor.execute(aQuery)
             cummulativeQuoteQty = cursor.fetchall()
         except Exception as e:
-            print('not sold order filled, update status and break')
-            sys.exit()
+            print('not sold order filled, update status and return')
+            return
         if len(cummulativeQuoteQty)==0:#if there is not value or record
             print('no filled sold order for ',aSymbol)
             cummulativeQuantity=20#assigning a value
@@ -135,7 +134,10 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
         order=None
         try:
             order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity,price=this_symbol_price)
+
             print('sell order: ', order)
+
+            
         except Exception as e:
             if 'APIError(code=-2010)' in str(e):
                 try:
@@ -148,7 +150,7 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                                     
                 except Exception as e:
                     print(e)
-                    print('exception when selling ', aSymbol)
+                    print('exception when selling insuficient funds ', aSymbol)
                     #if insuficient funds, purchase with less******
                     sys.exit()
             else:
