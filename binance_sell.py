@@ -141,7 +141,7 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
         except Exception as e:
             if 'APIError(code=-2010)' in str(e):
                 try:
-                    coins_quantity2=coins_quantity-1
+                    coins_quantity2=coins_quantity-(coins_quantity*0.1)
                     order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity2,price=this_symbol_price)
                     recommendation="sell"
                     ref_symbol_status="sold"

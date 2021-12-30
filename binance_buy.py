@@ -14,7 +14,8 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         cursor.execute(aQuery)
         buy_query = cursor.fetchall()
         print('buy_query from assets_transactions new', buy_query)
-        print('buy_query from assets_transactions new tuple', buy_query[0])
+        print('buy_query length', len(buy_query))
+        print('buy_query from assets_transactions new [0]', buy_query[0])
         print('buy_query from assets_transactions new status', buy_query["status"])
 
     except Exception as e:
@@ -24,6 +25,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         cursor.execute(aQuery)
         buy_query_filled = cursor.fetchall()
         print('buy_query from assets_transactions filled', buy_query_filled)
+        print('buy_query from assets_transactions filled[0]', buy_query_filled[0])
         print('buy_query from assets_transactions filled status', buy_query_filled["status"])
     except Exception as e:
         print('no filled buy order')
