@@ -13,15 +13,18 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
         cursor.execute(aQuery)
         buy_query = cursor.fetchall()
+        print('buy_query from assets_transactions new', buy_query)
+        print('buy_query from assets_transactions new tuple', buy_query[0])
+        print('buy_query from assets_transactions new status', buy_query["status"])
 
-        print('buy_query from assets_transactions', buy_query)
     except Exception as e:
         print('no new buy order')
     try:
         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='FILLED'")
         cursor.execute(aQuery)
         buy_query_filled = cursor.fetchall()
-        print('buy_query from assets_transactions', buy_query_filled)
+        print('buy_query from assets_transactions filled', buy_query_filled)
+        print('buy_query from assets_transactions filled status', buy_query_filled["status"])
     except Exception as e:
         print('no filled buy order')
     #we proceed to get last amount of money sold, so we 
