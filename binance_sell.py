@@ -137,7 +137,7 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
 
             print('sell order: ', order)
 
-            
+
         except Exception as e:
             if 'APIError(code=-2010)' in str(e):
                 try:
@@ -146,13 +146,12 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                     recommendation="sell"
                     ref_symbol_status="sold"
                     print('sell order 2: ', order)
-                    ##OJO update order here
-                                    
+                    ##OJO update order here  
                 except Exception as e:
                     print(e)
                     print('exception when selling insuficient funds ', aSymbol)
                     #if insuficient funds, purchase with less******
-                    sys.exit()
+                    return
             else:
                 print(e)
                 print('exception when selling ', aSymbol)

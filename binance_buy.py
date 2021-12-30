@@ -13,6 +13,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
         cursor.execute(aQuery)
         buy_query = cursor.fetchall()
+
         print('buy_query from assets_transactions', buy_query)
     except Exception as e:
         print('no new buy order')
