@@ -119,10 +119,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         except Exception as e:
             print(e)
             print("error buying ", aSymbol)
-            if "APIError(code=-1021)" in str(e):
-                break
-            else:
-                sys.exit()
+            return 
         #if we buy, then we can store to db
         try:
             #if no currently registered order, then we create the first record
