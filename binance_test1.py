@@ -478,6 +478,7 @@ while not(keyboard.is_pressed('q')):
                                     cursor.execute(aQuery)
                                     #commiting to db
                                     DBconnection.commit()
+                                
                             except Exception as e:
                                 print('error updating sell order: ', e)
 
