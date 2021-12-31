@@ -299,8 +299,8 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
         orderId=''
         orderId=result_tuple[0]
         #get order from binance
-        print('result_tuple array: ', orderId)
-        print('orderId[4]: ', orderId[4])
+        print('result_tuple array sell: ', orderId)
+        print('orderId[4] sell: ', orderId[4])
         currentOrder={}
         try:
             currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
