@@ -294,10 +294,12 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
         aQuery=""
         aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
         cursor.execute(aQuery)
+        result_tuple =''
         result_tuple = cursor.fetchall()
+        orderId=''
         orderId=result_tuple[0]
         #get order from binance
-        print('result_tuple array: ', result_tuple[0])
+        print('result_tuple array: ', orderId)
         print('orderId[4]: ', orderId[4])
         currentOrder={}
         try:
@@ -315,6 +317,7 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                 cursor.execute(aQuery)
                 #commiting to db
                 DBconnection.commit()
+                #31.12 we have to update the quantity of coins and return?
             
         except Exception as e:
             print('error updating sell order: ', e)
