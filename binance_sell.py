@@ -294,16 +294,16 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
         aQuery=""
         aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
         cursor.execute(aQuery)
-        result_tuple =''
-        result_tuple = cursor.fetchall()
-        orderId=''
-        orderId=result_tuple[0]
+        result_query =''
+        result_query = cursor.fetchall()
+        result_tuple=''
+        result_tuple=result_query[0]
         #get order from binance
-        print('result_tuple array sell: ', orderId)
-        print('orderId[4] sell: ', orderId[4])
+        print('result_tuple array sell: ', result_tuple)
+        print('result_tuple sell: ', result_tuple[4])
         currentOrder={}
         try:
-            currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
+            currentOrder = client.get_order(symbol=aSymbol,orderId=result_tuple[4])
             #12.12.2021
             print("sell currentOrder response: ", currentOrder)
             #update status
@@ -328,11 +328,11 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
         aQuery=""
         aQuery = ("SELECT `orderId`  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
         cursor.execute(aQuery)
-        orderId = cursor.fetchall()
+        result_tuple = cursor.fetchall()
         #get order from binance
         currentOrder={}
         try:
-            currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[0])
+            currentOrder = client.get_order(symbol=aSymbol,orderId=result_tuple[0])
             print("buy currentOrder response: ", currentOrder)
         #update status
             if  'FILLED' in currentOrder['status']:
