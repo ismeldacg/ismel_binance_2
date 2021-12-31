@@ -228,7 +228,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                 #print('sell query to update: ', sell_query)
                 sell_query_data=sell_query[0]#getting first of tuple
                 ordertoUpdate={}
-                print('order number: ', sell_query_data[4])
+                print('order number sell: ', sell_query_data[4])
                 ordertoUpdate = client.get_order(symbol=aSymbol,orderId=sell_query_data[4])
                 print('currentOrder: ', ordertoUpdate)
                 if ordertoUpdate['status']=='FILLED':
