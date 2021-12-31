@@ -99,7 +99,7 @@ def definePerformance(DBconnection, cursor):
             18:1.9,
             19:2.0,
     }
-    ref_day = datetime.today() - timedelta(days=7)
+    ref_day = datetime.today() - timedelta(days=1)#must change to days=1
     try: 
         aQuery =""
         #obtener criterio de rendimiento
