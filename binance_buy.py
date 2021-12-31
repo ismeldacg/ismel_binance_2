@@ -8,15 +8,26 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
     #query to know if there is an order
     buy_query=[]
     buy_query_filled=[]
+    sell_query=[]
+    #get new sell order added on 31.12.2021
+    #if new sell order then no buy
+    try:
+        aQuery=''
+        aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='NEW'")
+        cursor.execute(aQuery)
+        sell_query = cursor.fetchall()
+    except Exception as e:
+        print('exception because of no sell order')
+
     try:
         aQuery=''
         aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY' and `status`='NEW'")
         cursor.execute(aQuery)
         buy_query = cursor.fetchall()
         print('buy_query from assets_transactions new', buy_query)
-        print('buy_query length', len(buy_query))
-        print('buy_query from assets_transactions new [0]', buy_query[0])
-        print('buy_query from assets_transactions new status', buy_query[0](3))
+        #print('buy_query length', len(buy_query))
+        #print('buy_query from assets_transactions new [0]', buy_query[0])
+        #print('buy_query from assets_transactions new status', buy_query[0](3))
 
     except Exception as e:
         print('no new buy order')
@@ -25,12 +36,12 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         cursor.execute(aQuery)
         buy_query_filled = cursor.fetchall()
         print('buy_query from assets_transactions filled', buy_query_filled)
-        print('buy_query from assets_transactions filled[0]', buy_query_filled[0])
-        print('buy_query from assets_transactions filled status', buy_query_filled[0](3))
+        #print('buy_query from assets_transactions filled[0]', buy_query_filled[0])
+        #print('buy_query from assets_transactions filled status', buy_query_filled[0](3))
     except Exception as e:
         print('no filled buy order')
     #we proceed to get last amount of money sold, so we 
-    if len(buy_query)==0:#no new buy order
+    if len(buy_query)==0 and len(sell_query)==0:#no new buy order
         print('no purchase order, then we go to buy')
         #getting the last sold price
         cummulativeQuoteQty=[]
@@ -178,6 +189,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                         cursor.execute(aQuery)
                         #commiting to db
                         DBconnection.commit()
+                        return
                     else:
                             #update status
                         aQuery = "UPDATE `assets_transactions` SET `status`='NEW' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
@@ -194,11 +206,13 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                         cursor.execute(aQuery)
                         #commiting to db
                         DBconnection.commit()
+                        return
                 except Exception as e:
                     print('exception updating to db ', e)
                     sys.exit()
             #commiting to db
             DBconnection.commit()
+            return
             
         except Exception as e:
             print(e)
@@ -206,7 +220,35 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
             sys.exit()
     else:
         #then there is an open order, and we have to check order status
+        #in this case we have an open sell order or buy order, first we check the sell order
+        #if sell order not filled, we return, on the contrary we test purchase order,
+        #any not filled we must return, first sell order.
+        if sell_query:
+            try:
+                #print('sell query to update: ', sell_query)
+                sell_query_data=sell_query[0]#getting first of tuple
+                ordertoUpdate={}
+                print('order number: ', sell_query_data[4])
+                ordertoUpdate = client.get_order(symbol=aSymbol,orderId=sell_query_data[4])
+                print('currentOrder: ', ordertoUpdate)
+                if ordertoUpdate['status']=='FILLED':
+                    aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                    cursor.execute(aQuery)
+                    #updating executed quatity
+                    #update quantity of coins purchased
+                    aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(ordertoUpdate['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                    cursor.execute(aQuery)
+                    #update price of coins
+                    aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(ordertoUpdate['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                    #commiting to db
+                    DBconnection.commit()
+                else:
+                    return
+            except Exception as e:
+                print('error updating sell status: ', e)
+                sys.exit()
 
+        #if sell operation filled, then we proceed to check buy status, and update it if necessary
         try:
             #print('buy query to update: ', buy_query)
             buy_query_data=buy_query[0]#getting first of tuple
@@ -217,8 +259,28 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
             if ordertoUpdate['status']=='FILLED':
                 aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                 cursor.execute(aQuery)
+                #updating executed quatity
+                #update quantity of coins purchased
+                aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(ordertoUpdate['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                cursor.execute(aQuery)
+                #update price of coins
+                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(ordertoUpdate['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                 #commiting to db
                 DBconnection.commit()
+            else:
+                #if not filled, it means it is open
+                print('still buying '+aSymbol+' yet')
+                recommendation="buy order open"
+                    #after succcesfull bought status must be changed to bought
+                ref_symbol_status="buy order open"
+                #after succcesfull sold status must be changed to sold
+                #store to db
+                aQuery = "UPDATE `ref_price` SET `status`='buy order open' WHERE `symbol`="+'"'+aSymbol+'"'
+                cursor.execute(aQuery)
+                #commiting to db
+                DBconnection.commit()
+                #returns because it is still open, on the contrary we should change the status
+                return
         except Exception as e:
             print('error updating status: ', e)
             sys.exit()
