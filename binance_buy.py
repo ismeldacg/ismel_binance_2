@@ -248,42 +248,44 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                 print('error updating sell status: ', e)
                 sys.exit()
 
-        #if sell operation filled, then we proceed to check buy status, and update it if necessary
-        try:
-            #print('buy query to update: ', buy_query)
-            buy_query_data=buy_query[0]#getting first of tuple
-            ordertoUpdate={}
-            print('order number: ', buy_query_data[4])
-            ordertoUpdate = client.get_order(symbol=aSymbol,orderId=buy_query_data[4])
-            print('currentOrder: ', ordertoUpdate)
-            if ordertoUpdate['status']=='FILLED':
-                aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
-                cursor.execute(aQuery)
-                #updating executed quatity
-                #update quantity of coins purchased
-                aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(ordertoUpdate['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
-                cursor.execute(aQuery)
-                #update price of coins
-                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(ordertoUpdate['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
-                #commiting to db
-                DBconnection.commit()
-            else:
-                #if not filled, it means it is open
-                print('still buying '+aSymbol+' yet')
-                recommendation="buy order open"
-                    #after succcesfull bought status must be changed to bought
-                ref_symbol_status="buy order open"
-                #after succcesfull sold status must be changed to sold
-                #store to db
-                aQuery = "UPDATE `ref_price` SET `status`='buy order open' WHERE `symbol`="+'"'+aSymbol+'"'
-                cursor.execute(aQuery)
-                #commiting to db
-                DBconnection.commit()
-                #returns because it is still open, on the contrary we should change the status
-                return
-        except Exception as e:
-            print('error updating status: ', e)
-            sys.exit()
+        #after setting sell operation filled, then we proceed to check buy status, and update it if necessary
+        #if buy_query new, then we change status
+        if buy_query:
+            try:
+                print('buy query to update: ', buy_query)
+                buy_query_data=buy_query[0]#getting first of tuple
+                ordertoUpdate={}
+                print('buy order number: ', buy_query_data[4])
+                ordertoUpdate = client.get_order(symbol=aSymbol,orderId=buy_query_data[4])
+                print('currentOrder: ', ordertoUpdate)
+                if ordertoUpdate['status']=='FILLED':
+                    aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                    cursor.execute(aQuery)
+                    #updating executed quatity
+                    #update quantity of coins purchased
+                    aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(ordertoUpdate['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                    cursor.execute(aQuery)
+                    #update price of coins
+                    aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(ordertoUpdate['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                    #commiting to db
+                    DBconnection.commit()
+                else:
+                    #if not filled, it means it is open
+                    print('still buying '+aSymbol+' yet')
+                    recommendation="buy order open"
+                        #after succcesfull bought status must be changed to bought
+                    ref_symbol_status="buy order open"
+                    #after succcesfull sold status must be changed to sold
+                    #store to db
+                    aQuery = "UPDATE `ref_price` SET `status`='buy order open' WHERE `symbol`="+'"'+aSymbol+'"'
+                    cursor.execute(aQuery)
+                    #commiting to db
+                    DBconnection.commit()
+                    #returns because it is still open, on the contrary we should change the status
+                    return
+            except Exception as e:
+                print('error updating status buy: ', e)
+                sys.exit()
         print('still buying '+aSymbol+' yet')
         recommendation="buy order open"
             #after succcesfull bought status must be changed to bought
