@@ -114,7 +114,7 @@ def definePerformance(DBconnection, cursor):
     except Exception as e:
         print('erro calculating performance: ', e)
     performance_dict = {}
-    #print("ref_price_tuples: ", ref_price_tuples)
+    print("performance_tuples updated: ", performance_tuples)
     try:
         for a_tuple in performance_tuples:
             if a_tuple[1]<20:

@@ -107,7 +107,7 @@ while not(keyboard.is_pressed('q')):
     last_updated=execute_user_query(connection=DBconnection, aQuery=aQuery)
     last_update_list=last_updated[0]
     #current date 
-    #print('last_update_date: ', last_update_list[0])
+    print('last_update_date: ', last_update_list[0])
     #testing if must be updated
     #changed timedelta to hours on 11.12.2020
     if (datetime.today()-last_update_list[0])>timedelta(hours=1):
