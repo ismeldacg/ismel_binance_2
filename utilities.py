@@ -143,16 +143,16 @@ def getRefValues(DBconnection, cursor):
     except Exception as e:
         print("exception getting ref price")
     ref_price_dict = {}
-    #print("ref_price_tuples: ", ref_price_tuples)
+    print("ref_price_tuples: ", ref_price_tuples)
     for a_tuple in ref_price_tuples:
         ref_price_dict[a_tuple[1]]=a_tuple[2]
-    #print("ref_price_dict: ", ref_price_dict)
+    print("ref_price_dict: ", ref_price_dict)
     ref_sd_dict = {}
     for a_tuple in ref_price_tuples:
         ref_sd_dict[a_tuple[1]]=a_tuple[4]
     #getting the performance value
     ref_perf_dict = {}
-    #print("ref_price_tuples: ", ref_price_tuples)
+    print("ref_price_tuples: ", ref_price_tuples)
     for a_tuple in ref_price_tuples:
         ref_perf_dict[a_tuple[1]]=a_tuple[6]
     #retunring all vaues

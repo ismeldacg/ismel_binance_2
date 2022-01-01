@@ -117,10 +117,12 @@ while not(keyboard.is_pressed('q')):
         print("going to update******")
         updateAvg(DBconnection, cursor)
         definePerformance(DBconnection, cursor)
+        ref_price_dict = {}
+        ref_sd_dict = {}
+        ref_perf_dict = {}
         ref_price_dict, ref_sd_dict, ref_perf_dict=getRefValues(DBconnection, cursor)
         print('commiting to db')
         DBconnection.commit()
-        #sys.exit()
     #getting symbols status
     #obtaining reference price
 
@@ -173,11 +175,11 @@ while not(keyboard.is_pressed('q')):
                 if float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="bought") :
                 #condition fulfilled to sell 30.12.2021
                 #begins sell operation
-                    sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection, recommendation)
+                    recommendation = sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection, recommendation)
                 #finishes sell operation here 30.12.2021
 
                 elif (float(symbol_price["price"]) < ref_symbol_price-(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="sold" or ref_symbol_status==""):
-                    buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection, recommendation)
+                    recommendation = buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection, recommendation)
                 #elif open order
                 elif float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="buy order open") :
                     print('recommended to sell, but buy order open, we must check the status')
