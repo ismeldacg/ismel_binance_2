@@ -3,7 +3,7 @@ import os, sys, time
 
 #main sell operation
 
-def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection):
+def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection,recommendation):
     print('going to buy ', aSymbol)
     #query to know if there is an order
     buy_query=[]
@@ -136,7 +136,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         except Exception as e:
             print(e)
             print("error buying ", aSymbol)
-            return 
+            return recommendation
         #if we buy, then we can store to db
         try:
             #if no currently registered order, then we create the first record
@@ -189,7 +189,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                         cursor.execute(aQuery)
                         #commiting to db
                         DBconnection.commit()
-                        return
+                        return recommendation
                     else:
                             #update status
                         aQuery = "UPDATE `assets_transactions` SET `status`='NEW' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
@@ -206,13 +206,13 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                         cursor.execute(aQuery)
                         #commiting to db
                         DBconnection.commit()
-                        return
+                        return recommendation
                 except Exception as e:
                     print('exception updating to db ', e)
                     sys.exit()
             #commiting to db
             DBconnection.commit()
-            return
+            return recommendation
             
         except Exception as e:
             print(e)
@@ -243,7 +243,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                     #commiting to db
                     DBconnection.commit()
                 else:
-                    return
+                    return recommendation
             except Exception as e:
                 print('error updating sell status: ', e)
                 sys.exit()
@@ -282,7 +282,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                     #commiting to db
                     DBconnection.commit()
                     #returns because it is still open, on the contrary we should change the status
-                    return
+                    return recommendation
             except Exception as e:
                 print('error updating status buy: ', e)
                 sys.exit()
@@ -296,3 +296,4 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         cursor.execute(aQuery)
         #commiting to db
         DBconnection.commit()
+        return recommendation

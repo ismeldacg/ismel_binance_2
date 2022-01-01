@@ -3,7 +3,7 @@ import os, sys, time
 
 #main sell operation
 
-def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection):
+def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection, recommendation):
     print("go to sell ", aSymbol)
     sell_query=[]
     buy_query=[]
@@ -32,7 +32,8 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
             #if buy order open, then we must break and return
             if current_status:
                 print("there is a buy order open, we must not sell anything? ",current_status)
-                return
+                recommendation="do nothing"
+                return recommendation
         except Exception as e:
             print('no buy order open')
         cummulativeQuoteQty=[]
@@ -46,7 +47,8 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
             cummulativeQuoteQty = cursor.fetchall()
         except Exception as e:
             print('not sold order filled, update status and return')
-            return
+            recommendation="do nothing"
+            return recommendation
         if len(cummulativeQuoteQty)==0:#if there is not value or record
             print('no filled sold order for ',aSymbol)
             cummulativeQuantity=20#assigning a value
@@ -151,7 +153,8 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                     print(e)
                     print('exception when selling insuficient funds ', aSymbol)
                     #if insuficient funds, purchase with less******
-                    return
+                    recommendation="do nothing"
+                    return recommendation
             else:
                 print(e)
                 print('exception when selling ', aSymbol)
@@ -348,5 +351,5 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
         except Exception as e:
             print('error updating open buy order: ',e)
             time.sleep(60)
-    return
+    return recommendation
                 
