@@ -152,13 +152,21 @@ while not(keyboard.is_pressed('q')):
                 ref_symbol_perf=ref_perf_dict[symbol_price["symbol"]]
                 if ref_symbol_perf==0.0:
                     ref_symbol_perf=0.1
-                #get time
+                #get values of a coin
                 ref_symbol_price=ref_price_dict[symbol_price["symbol"]]#getting price of current symbol
-                #print("ref_symbol_price: ", ref_symbol_price)
                 ref_symbol_sd = ref_sd_dict[symbol_price["symbol"]]
-                #print("ref_symbol_sd: ", ref_symbol_sd)
                 ref_symbol_status = ref_status_dict[symbol_price["symbol"]]
-                #print("ref_symbol_status: ", ref_symbol_status)
+
+                
+                if aSymbol=="XRPUSDT":
+                    print("ref_symbol_status, status en db: ", ref_symbol_status)
+                    print("performance calculado: ", ref_symbol_perf)
+                    print("precio real de la moneda: ", symbol_price)
+                    print("ref_symbol_price, price in db: ", ref_symbol_price)
+                    print("ref_symbol_sd claculated: ", ref_symbol_sd)
+
+
+
                 recommendation="do nothing"
                 #agregar más parentesis, seleccionar una moneda y fijarle el precio para probar
                 print('evaluating ', aSymbol)
@@ -167,6 +175,7 @@ while not(keyboard.is_pressed('q')):
                 #begins sell operation
                     sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection)
                 #finishes sell operation here 30.12.2021
+
                 elif (float(symbol_price["price"]) < ref_symbol_price-(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="sold" or ref_symbol_status==""):
                     buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection)
                 #elif open order
