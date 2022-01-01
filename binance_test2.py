@@ -108,6 +108,8 @@ while not(keyboard.is_pressed('q')):
     last_update_list=last_updated[0]
     #current date 
     print('last_update_date: ', last_update_list[0])
+    print('datetime.today() for update: ', datetime.today())
+    print('update operation: ', datetime.today()-last_update_list[0])
     #testing if must be updated
     #changed timedelta to hours on 11.12.2020
     if (datetime.today()-last_update_list[0])>timedelta(hours=1):
