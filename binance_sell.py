@@ -136,8 +136,12 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
         order=None
         try:
             order = client.order_limit_sell(symbol=aSymbol,quantity=coins_quantity,price=this_symbol_price)
-
             print('sell order: ', order)
+            #we have to include the update function here 02.12.2021
+            if order['status']=='FILLED':
+                print('order filled update')
+            elif order['status']=='NEW':
+                print('order new update')
 
 
         except Exception as e:
@@ -166,7 +170,8 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                         
         try:
             aQuery=''
-            aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'")
+            ##should not be "and status="filled""???
+            aQuery = ("SELECT * FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status`='FILLED'")
             cursor.execute(aQuery)
             sell_filled_query = cursor.fetchall()
             print('sell_filled_query: ', sell_filled_query)

@@ -131,8 +131,14 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                 price=this_symbol_price)
             print('buy order ',buy_limit)
             recommendation="buy"
-            ref_symbol_status="bought"
+            
             #OJO **************** I should update purchase here, and not later, only if purchase open
+            if buy_limit['status']=="FILLED":
+                ref_symbol_status="bought"
+            else:
+                ref_symbol_status="buy order open"
+            print('buy_limit status ', buy_limit['status'])
+
         except Exception as e:
             print(e)
             print("error buying ", aSymbol)
@@ -185,7 +191,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                         ref_symbol_status="bought"
                         #after succcesfull sold status must be changed to sold
                         #store to db
-                        aQuery = "UPDATE `ref_price` SET `status`='bought' WHERE `symbol`="+'"'+aSymbol+'"'
+                        aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                         cursor.execute(aQuery)
                         #commiting to db
                         DBconnection.commit()
@@ -242,8 +248,11 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                     aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(ordertoUpdate['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
                     #commiting to db
                     DBconnection.commit()
+                    recommendation="do nothing"
+                    ref_symbol_status="sold"
                 else:
-                    return recommendation
+                    recommendation="sell order open"
+                    ref_symbol_status="sold"
             except Exception as e:
                 print('error updating sell status: ', e)
                 sys.exit()
@@ -269,6 +278,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                     aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+str(ordertoUpdate['cummulativeQuoteQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                     #commiting to db
                     DBconnection.commit()
+                    recommendation="do nothing"
                 else:
                     #if not filled, it means it is open
                     print('still buying '+aSymbol+' yet')
@@ -287,7 +297,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                 print('error updating status buy: ', e)
                 sys.exit()
         print('still buying '+aSymbol+' yet')
-        recommendation="buy order open"
+        
             #after succcesfull bought status must be changed to bought
         ref_symbol_status="buy order open"
         #after succcesfull sold status must be changed to sold
