@@ -184,7 +184,7 @@ while not(keyboard.is_pressed('q')):
                 elif float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="buy order open") :
                     print('recommended to sell, but buy order open, we must check the status')
                     recommendation="do nothing"
-                    print('there is an open sell order, so I can not sell')
+                    print('there is an open buy order, so I have to check buy status')
                     aQuery=""
                     aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'")
                     cursor.execute(aQuery)
@@ -215,6 +215,7 @@ while not(keyboard.is_pressed('q')):
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
+                                
                         except Exception as e:
                             print('error updating buy order: ', e)
 

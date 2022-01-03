@@ -326,6 +326,12 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                 #commiting to db
                 DBconnection.commit()
                 #31.12 we have to update the quantity of coins and return?
+                #query
+                aQuery = "UPDATE `ref_price` SET `status`='sold' WHERE `symbol`="+'"'+aSymbol+'"'
+                cursor.execute(aQuery)
+                #commiting to db
+                DBconnection.commit()
+                #return recommendation????
             
         except Exception as e:
             print('error updating sell order: ', e)
@@ -350,6 +356,12 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                 DBconnection.commit()
                 #update status
                 aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
+                cursor.execute(aQuery)
+                #commiting to db
+                DBconnection.commit()
+                #updateing ref_price
+                #query
+                aQuery = "UPDATE `ref_price` SET `status`='bought' WHERE `symbol`="+'"'+aSymbol+'"'
                 cursor.execute(aQuery)
                 #commiting to db
                 DBconnection.commit()
