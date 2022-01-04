@@ -67,42 +67,42 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
 
         #increasing the trading price for a symbol******************
         #granting we can purchase more of one specific coin
-        if "XRPUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "STXUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "DOGEUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "VETUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "SANDUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "MBLUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "KLAYUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "HBARUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "BTTUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "CHZUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
-        elif "TRXUSDT" in aSymbol and cummulativeQuantity < 100:
-            print('increasing '+aSymbol+' purchase amount to 100')
-            cummulativeQuantity=100
+        if "CELRUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "ONEUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "COTIUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "ALGOUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "COCOSUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "TRIBEUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "CTSIUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "XLMUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "FETUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "HARDUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "SHIBUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
+        elif "CTXCUSDT" in aSymbol and cummulativeQuantity < 20:
+            print('increasing '+aSymbol+' purchase amount to 20')
+            cummulativeQuantity=20
         
 
         current_str_symbol_price=symbol_price["price"]

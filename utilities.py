@@ -16,7 +16,8 @@ from mysql_generic_script import (
 def updateAvg(DBconnection, cursor):
     #first we get current date, and move 7 days back
     #ref_day = datetime.today() - timedelta(days=7)
-    ref_day = datetime.today() - timedelta(days=1)
+    newnow = datetime.today().replace(microsecond=0)  #cambio para evitar los microsegundos en la hora
+    ref_day = newnow - timedelta(days=1)
     print("ref day: ",ref_day)
     #obtaining symbols from db
     try:
@@ -63,7 +64,7 @@ def updateAvg(DBconnection, cursor):
                 aQuery = "UPDATE `ref_price` SET `desviation`= %s WHERE `symbol`="+'"'+aSymbol+'"'
                 cursor.execute(aQuery,(desviation_price_2))
                 #update date
-                update_date_time=datetime.today()
+                update_date_time=newnow
                 #query
                 aQuery = "UPDATE `ref_price` SET `updated`= "+'"'+str(update_date_time)+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
                 cursor.execute(aQuery)#,(update_date_time))
@@ -99,7 +100,8 @@ def definePerformance(DBconnection, cursor):
             18:1.9,
             19:2.0,
     }
-    ref_day = datetime.today() - timedelta(days=1)#must change to days=1
+    newnow = datetime.today().replace(microsecond=0)  #cambio para evitar los microsegundos en la hora
+    ref_day = newnow - timedelta(days=1)#must change to days=1
     #check date for update
     print("ref date for update: ", ref_day)
     try: 
