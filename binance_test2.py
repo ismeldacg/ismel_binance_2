@@ -14,7 +14,7 @@ from mysql_generic_script import (
     execute_user_query,
     insert_into_table,
 )
-from binance_sell import sellOperation
+from binance_sell2 import sellOperation
 from binance_buy import buyOperation
 
 

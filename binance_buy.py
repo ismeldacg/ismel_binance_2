@@ -142,6 +142,7 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
         except Exception as e:
             print(e)
             print("error buying ", aSymbol)
+            
             return recommendation
         #if we buy, then we can store to db
         try:
