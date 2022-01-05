@@ -211,6 +211,8 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                 recommendation="buy"
                 return recommendation
             else:
+                print('order open update')
+                order_Filled_Update(currentOrder, aSymbol, "buy",cursor, DBconnection, "buy order open")
                 recommendation="buy"
                 return recommendation
         except Exception as e:
