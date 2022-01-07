@@ -230,7 +230,7 @@ def order_Filled_Update(order, aSymbol, side,cursor, DBconnection, ref_symbol_st
     try:
         #store to db
         #query
-        aQuery = "UPDATE `ref_price` SET `status`='sold' WHERE `symbol`="+'"'+aSymbol+'"'
+        aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
         cursor.execute(aQuery)
         #commiting to db
         DBconnection.commit()
