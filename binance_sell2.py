@@ -140,14 +140,39 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
             print('sell order: ', order)
             #we have to include the update function here 02.12.2021
             if order['status']=='FILLED':
-                print('order filled update')
-                order_Filled_Update(order, aSymbol, "sell",cursor, DBconnection, "sold")
+                print('updating status of assets_transactions and  ref_price')
+                #update orderId
+                aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                cursor.execute(aQuery)
+                DBconnection.commit()
+                #updating ref price with status bought 
+                #updating recommendation
                 recommendation="sell"
+                #after succcesfull bought status must be changed to bought
+                ref_symbol_status="bought"
+                #after succcesfull sold status must be changed to sold
+                #store to db
+                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                cursor.execute(aQuery)
+                #commiting to db
+                DBconnection.commit()
                 return recommendation
             elif order['status']=='NEW':
-                print('order new update')
-                order_Filled_Update(order, aSymbol, "sell",cursor, DBconnection, "sell order open")
-                recommendation="sell"
+                #update status
+                aQuery = "UPDATE `assets_transactions` SET `status`='NEW' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                cursor.execute(aQuery)
+                #commiting to db
+                DBconnection.commit()
+                #updating recommendation
+                recommendation="sell order open"
+                #after succcesfull bought status must be changed to bought
+                ref_symbol_status="sell order open"
+                #after succcesfull sold status must be changed to sold
+                #store to db
+                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                cursor.execute(aQuery)
+                #commiting to db
+                DBconnection.commit()
                 return recommendation
 
 
