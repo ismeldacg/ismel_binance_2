@@ -149,7 +149,7 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                 #updating recommendation
                 recommendation="sell"
                 #after succcesfull bought status must be changed to bought
-                ref_symbol_status="bought"
+                ref_symbol_status="sold"
                 #after succcesfull sold status must be changed to sold
                 #store to db
                 aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
