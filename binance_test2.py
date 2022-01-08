@@ -181,7 +181,7 @@ while not(keyboard.is_pressed('q')):
                 elif (float(symbol_price["price"]) < ref_symbol_price-(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="sold" or ref_symbol_status==""):
                     recommendation = buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection, recommendation)
                 #elif buy order open 
-                elif float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="buy order open") :
+                elif (ref_symbol_status=="buy order open") :
                     print('recommended to buy, but buy order open, we must check the status')
                     recommendation="do nothing"
                     print('there is an open buy order, so I have to check buy status')
@@ -220,7 +220,7 @@ while not(keyboard.is_pressed('q')):
                             print('error updating buy order: ', e)
 
                 #elif sell order open 
-                elif float(symbol_price["price"]) < (ref_symbol_price-(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="sell order open") :
+                elif  (ref_symbol_status=="sell order open") :
                     print('recommended to sell, but sell order open, we must check the status')
                     recommendation="do nothing"
                     print('there is an open sell order, so I have to check sell status')

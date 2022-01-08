@@ -174,6 +174,25 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                 #commiting to db
                 DBconnection.commit()
                 return recommendation
+            else:
+                #unknown status 
+                ref_symbol_status=order['status']
+                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                cursor.execute(aQuery)
+                #commiting to db
+                DBconnection.commit()
+                #updating recommendation
+                recommendation="sell order open"
+                #after succcesfull bought status must be changed to bought
+                ref_symbol_status="sell order open"
+                #after succcesfull sold status must be changed to sold
+                #store to db
+                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                cursor.execute(aQuery)
+                #commiting to db
+                DBconnection.commit()
+                return recommendation
+
 
 
         except Exception as e:
