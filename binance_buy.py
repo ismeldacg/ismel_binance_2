@@ -184,6 +184,9 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                         #update orderId
                         aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                         cursor.execute(aQuery)
+                         #update orderID
+                        aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(buy_limit['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                        cursor.execute(aQuery)
                         DBconnection.commit()
                         #updating ref price with status bought 
                         #updating recommendation
@@ -200,6 +203,9 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                     else:
                             #update status
                         aQuery = "UPDATE `assets_transactions` SET `status`='NEW' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                        cursor.execute(aQuery)
+                         #update orderID
+                        aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(buy_limit['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                         cursor.execute(aQuery)
                         #commiting to db
                         DBconnection.commit()
@@ -241,6 +247,9 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                 if ordertoUpdate['status']=='FILLED':
                     aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
                     cursor.execute(aQuery)
+                     #update orderID
+                    aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(ordertoUpdate['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                    cursor.execute(aQuery)
                     #updating executed quatity
                     #update quantity of coins purchased
                     aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(ordertoUpdate['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
@@ -270,6 +279,9 @@ def buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconn
                 print('currentOrder: ', ordertoUpdate)
                 if ordertoUpdate['status']=='FILLED':
                     aQuery = "UPDATE `assets_transactions` SET `status`='FILLED' WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
+                    cursor.execute(aQuery)
+                    #update orderID
+                    aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(ordertoUpdate['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='BUY'"
                     cursor.execute(aQuery)
                     #updating executed quatity
                     #update quantity of coins purchased

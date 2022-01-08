@@ -221,11 +221,11 @@ while not(keyboard.is_pressed('q')):
 
                 #elif sell order open 
                 elif  (ref_symbol_status=="sell order open") :
-                    print('recommended to sell, but sell order open, we must check the status')
+                    print(' sell order open, we must check the status')
                     recommendation="do nothing"
                     print('there is an open sell order, so I have to check sell status')
                     aQuery=""
-                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'")
+                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and status = `new`") 
                     cursor.execute(aQuery)
                     result_tuple = cursor.fetchall()
                     if len(result_tuple)>0:
