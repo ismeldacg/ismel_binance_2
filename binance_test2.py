@@ -225,7 +225,7 @@ while not(keyboard.is_pressed('q')):
                     recommendation="do nothing"
                     print('there is an open sell order, so I have to check sell status')
                     aQuery=""
-                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and status = `new`") 
+                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status` ='new'") 
                     cursor.execute(aQuery)
                     result_tuple = cursor.fetchall()
                     if len(result_tuple)>0:
@@ -270,6 +270,7 @@ while not(keyboard.is_pressed('q')):
                 #inserting delay
                 #print("delay time")
                 time.sleep(10)
+                #elif  (ref_symbol_status=="sell order open") : nuevo status que procesar
             except Exception as e:
                 print("exception found here: ", e)
                 time.sleep(60)
