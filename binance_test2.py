@@ -225,7 +225,8 @@ while not(keyboard.is_pressed('q')):
                     recommendation="do nothing"
                     print('there is an open sell order, so I have to check sell status')
                     aQuery=""
-                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL' and `status` ='new'") 
+                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'") 
+                    #removed status = new to test and `status` ='new'. 
                     cursor.execute(aQuery)
                     result_tuple = cursor.fetchall()
                     if len(result_tuple)>0:
