@@ -148,6 +148,10 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                 #update orderID
                 aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(order['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
                 cursor.execute(aQuery)
+                print("UPDATE `assets_transactions` SET `executedQty`=")
+                side='SELL'
+                aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(order['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
+                cursor.execute(aQuery)
                 DBconnection.commit()
                 #updating ref price with status bought 
                 #updating recommendation
@@ -167,6 +171,10 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
                 cursor.execute(aQuery)
                  #update orderID
                 aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(order['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'"
+                cursor.execute(aQuery)
+                print("UPDATE `assets_transactions` SET `executedQty`=")
+                side='SELL'
+                aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(order['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
                 cursor.execute(aQuery)
                 DBconnection.commit()
                 #commiting to db

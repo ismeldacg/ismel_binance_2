@@ -206,6 +206,9 @@ while not(keyboard.is_pressed('q')):
                                 #update status
                                 aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
+                                side='BUY'
+                                aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(currentOrder['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
+                                cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
                                 recommendation="do nothing"
@@ -245,6 +248,9 @@ while not(keyboard.is_pressed('q')):
                                 DBconnection.commit()
                                 #update status
                                 aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                side='SELL'
+                                aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(currentOrder['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
                                 cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
