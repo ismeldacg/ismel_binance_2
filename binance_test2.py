@@ -14,7 +14,7 @@ from mysql_generic_script import (
     execute_user_query,
     insert_into_table,
 )
-from binance_sell import sellOperation
+from binance_sell2 import sellOperation
 from binance_buy import buyOperation
 
 
@@ -181,9 +181,9 @@ while not(keyboard.is_pressed('q')):
 
                 elif (float(symbol_price["price"]) < ref_symbol_price-(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="sold" or ref_symbol_status==""):
                     recommendation = buyOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBconnection, recommendation)
-                #elif open order
-                elif float(symbol_price["price"]) > (ref_symbol_price+(ref_symbol_perf*ref_symbol_sd)) and (ref_symbol_status=="buy order open") :
-                    print('recommended to sell, but buy order open, we must check the status')
+                #elif buy order open 
+                elif (ref_symbol_status=="buy order open") :
+                    print('recommended to buy, but buy order open, we must check the status')
                     recommendation="do nothing"
                     print('there is an open buy order, so I have to check buy status')
                     aQuery=""
@@ -207,6 +207,9 @@ while not(keyboard.is_pressed('q')):
                                 #update status
                                 aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='BUY' and `symbol`="+'"'+aSymbol+'"'
                                 cursor.execute(aQuery)
+                                side='BUY'
+                                aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(currentOrder['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
+                                cursor.execute(aQuery)
                                 #commiting to db
                                 DBconnection.commit()
                                 recommendation="do nothing"
@@ -220,6 +223,48 @@ while not(keyboard.is_pressed('q')):
                         except Exception as e:
                             print('error updating buy order: ', e)
 
+                #elif sell order open 
+                elif  (ref_symbol_status=="sell order open") :
+                    print(' sell order open, we must check the status')
+                    recommendation="do nothing"
+                    print('there is an open sell order, so I have to check sell status')
+                    aQuery=""
+                    aQuery = ("SELECT *  FROM `assets_transactions` WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`='SELL'") 
+                    #removed status = new to test and `status` ='new'. 
+                    cursor.execute(aQuery)
+                    result_tuple = cursor.fetchall()
+                    if len(result_tuple)>0:
+                        orderId=result_tuple[0]
+                        #get order from binance
+                        print('result_tuple array: ', result_tuple[0])
+                        print('orderId[4]: ', orderId[4])
+                        currentOrder={}
+                        try:
+                            currentOrder = client.get_order(symbol=aSymbol,orderId=orderId[4])
+                            #update status
+                            if  'FILLED' in currentOrder['status']:
+                                aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+currentOrder['status']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                    #commiting to db
+                                DBconnection.commit()
+                                #update status
+                                aQuery = "UPDATE `assets_transactions` SET `cummulativeQuoteQty`="+'"'+currentOrder['cummulativeQuoteQty']+'"'+" WHERE `side`='SELL' and `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                side='SELL'
+                                aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(currentOrder['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                                recommendation="do nothing"
+                                ref_symbol_status="sold"
+                                #store recommendation to db
+                                aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+                                cursor.execute(aQuery)
+                                #commiting to db
+                                DBconnection.commit()
+                                
+                        except Exception as e:
+                            print('error updating buy order: ', e)
                 #getting current time
                 print("I recommend you to ",recommendation)
                 now = datetime.now()
@@ -233,6 +278,7 @@ while not(keyboard.is_pressed('q')):
                 #inserting delay
                 #print("delay time")
                 time.sleep(10)
+                #elif  (ref_symbol_status=="sell order open") : nuevo status que procesar
             except Exception as e:
                 print("exception found here: ", e)
                 time.sleep(60)

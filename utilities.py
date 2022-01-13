@@ -181,6 +181,68 @@ def updateDBTable_number(aTable, aColumn, aValue, aSymbol, DBconnection, cursor)
     except:
         return False
 
+#funtion to update tables after a filled sell or purchase
+def order_Filled_Update(order, aSymbol, side,cursor, DBconnection, ref_symbol_status):
+    try:    
+        print("UPDATE `assets_transactions` SET `status`=")
+        print("order['status']: ", order['status'])
+        aQuery = "UPDATE `assets_transactions` SET `status`="+'"'+order['status']+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
+        cursor.execute(aQuery)
+        #commiting to db
+        DBconnection.commit()
+    except Exception as e:#correction on 01.08
+        print(e)
+        print("error inserting status to db")
+        sys.exit()
+    #updating 
+    try:    
+        print("UPDATE `assets_transactions` SET `orderId`=")
+        print("order['orderId']: ", order['orderId'])
+        aQuery = "UPDATE `assets_transactions` SET `orderId`="+'"'+str(order['orderId'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
+        cursor.execute(aQuery)
+        #commiting to db
+        DBconnection.commit()
+    except Exception as e:#correction on 01.08
+        print(e)
+        print("error inserting orderId to db")
+        sys.exit()
+    #updating price
+    try:    
+        print("UPDATE `assets_transactions` SET `price`=")
+        aQuery = "UPDATE `assets_transactions` SET `price`="+'"'+str(order['price'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
+        cursor.execute(aQuery)
+        #commiting to db
+        DBconnection.commit()
+    except Exception as e:#correction on 01.08
+        print(e)
+        print("error inserting price to db")
+        sys.exit()
+    print('updating '+aSymbol+ 'in assets_transactions  with ' +order['executedQty'])
+    try:    
+        print("UPDATE `assets_transactions` SET `executedQty`=")
+        aQuery = "UPDATE `assets_transactions` SET `executedQty`="+'"'+str(order['executedQty'])+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'+" and `side`="+'"'+side+'"'
+        cursor.execute(aQuery)
+        #commiting to db
+        DBconnection.commit()
+    except Exception as e:#correction on 01.08
+        print(e)
+        print("error inserting price to db")
+        sys.exit()
+    print('updating '+aSymbol+ 'in ref_price  with ' +ref_symbol_status)
+    try:
+        #store to db
+        #query
+        aQuery = "UPDATE `ref_price` SET `status`="+'"'+ref_symbol_status+'"'+" WHERE `symbol`="+'"'+aSymbol+'"'
+        cursor.execute(aQuery)
+        #commiting to db
+        DBconnection.commit()
+        return
+    except Exception as e:
+        print(e)
+        print("error updating sell status in `ref_price` ")
+        sys.exit()
+
+
 
 
     

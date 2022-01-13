@@ -140,6 +140,7 @@ def sellOperation(aSymbol, cursor, symbol_price, client, ref_symbol_price, DBcon
             #we have to include the update function here 02.12.2021
             if order['status']=='FILLED':
                 print('order filled update')
+                
             elif order['status']=='NEW':
                 print('order new update')
 
